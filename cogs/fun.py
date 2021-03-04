@@ -30,5 +30,3 @@ class Fun(Cog):
 
 def setup(bot: commands.Bot):
     bot.add_cog(Fun())
-
-"hug link: https://purrbot.site/api/img/sfw/hug/gif"

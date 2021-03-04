@@ -36,7 +36,10 @@ class Roles(commands.Cog):
             print(error)
 
 
-    @commands.command(aliases=["inv"])
+    @commands.command(aliases=["inv"],
+                      brief="List available colors.",
+                      help="Lists all the colors you have. Only works in the" +
+                           " test server.")
     async def inventory(self, ctx):
         """Sends an embed with the available color list."""
         member = ctx.author
@@ -65,7 +68,10 @@ class Roles(commands.Cog):
             await ctx.send(f"{ctx.author.mention}, you don't have any colors" +
                            " in your inventory!")
 
-    @commands.command()
+    @commands.command(brief="Add a color",
+                      help="Add a color from your inventory. It must be one" +
+                           " that you have unlocked. Only available in" +
+                           " the testing server.")
     async def equip(self, ctx, *, role_name):
         """Equips a color from your inventory."""
         member = ctx.author
@@ -91,7 +97,9 @@ class Roles(commands.Cog):
             await member.add_roles(added_color_role)
             await ctx.message.add_reaction("👌")
 
-    @commands.command()
+    @commands.command(brief="Removes your color.",
+                      help="Removes any colors you have equipped. Only " +
+                           "available in the test server.")
     async def unequip(self, ctx):
         await ctx.author.remove_roles(*[discord.Object(i) for i in all_color_role_ids])
         await ctx.message.add_reaction("👌")

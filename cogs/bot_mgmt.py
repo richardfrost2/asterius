@@ -20,7 +20,10 @@ class BotManagement(Cog):
     Use with caution.
     """
 
-    @commands.command(aliases=["repo","code"])
+    @commands.command(aliases=["repo","code"],
+                      brief="All about me",
+                      help="Gives some information about the bot, like the" +
+                           "author, library, and source code.")
     async def about(self, ctx):
         """Some general information about the bot."""
         async def im_in_guild(ctx) -> bool:
@@ -47,7 +50,11 @@ class BotManagement(Cog):
                         inline=False)
         await ctx.send(embed=embed)
 
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      brief="Dive in",
+                      help="Gives an invite to the bot testing server.\n" +
+                           "Admit 1, and it only lasts a few minutes, so" +
+                           " get it before it's gone!")
     async def letmein(self, ctx):
         test_server = ctx.bot.get_guild(755940090362200168)
         for ban in await test_server.bans():
@@ -72,7 +79,11 @@ class BotManagement(Cog):
 
 
     @commands.is_owner()
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      brief="Where am I?",
+                      help="Lists the servers the bot is in.\nDue to the" +
+                           " sensitive nature of this, this command is owner" +
+                           " only.")
     async def serverlist(self, ctx: commands.Context):
         """Lists the guilds the bot is a part of."""
         embed = discord.Embed()
@@ -82,7 +93,10 @@ class BotManagement(Cog):
         await ctx.send(embed=embed)
 
     @commands.is_owner()
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      brief="What am I doing?",
+                      help="Changes the bot's appearance. This command is" +
+                           " owner-only.")
     async def status(self, ctx: commands.Context, activity_type, *, activity_name):
         """Changes the bot's status."""
         if activity_type.lower() == "playing":
@@ -126,7 +140,8 @@ class BotManagement(Cog):
             await ctx.send(f"`'{ctx.author.name}'' isn't in the sudoers file. " +
                            "This incident will be reported.`")
     
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      enabled=False)
     async def sudoexec(self, ctx, *, expr = ""):
         """Executes arbitrary Python code iff the author is a bot owner.
         Note that someone with access can execute arbitrary code.
@@ -148,9 +163,6 @@ class BotManagement(Cog):
         else:
             await ctx.send(f"`'{ctx.author.name}'' isn't in the sudoers file. " +
                            "This incident will be reported.`")
-
-
-
 
 def setup(bot: commands.Bot):
     """Adds the cog to the bot when added."""

@@ -19,7 +19,10 @@ from PIL import Image, ImageEnhance
 
 class Avatar(Cog):
 
-    @commands.command()
+    @commands.command(brief="Show a user's avatar",
+                      usage="[@target]",
+                      help="Gives you a user's avatar. If no one is mentioned,"
+                           " gets your own avatar.")
     async def avatar(self, ctx):
         embed = util.Embed()
         postable = False
@@ -37,7 +40,9 @@ class Avatar(Cog):
             await ctx.send(embed=embed)
 
 
-    @commands.command()
+    @commands.command(brief="Turn an image grayscale.",
+                      usage="[@user] | [url] | [attachment]",
+                      help="Turns an image grayscale. Gifs are not supported.")
     async def grayscale(self, ctx):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         # Get image to grayscale.
@@ -70,10 +75,11 @@ class Avatar(Cog):
         file = discord.File(img_file, filename="grayscale.png")
         await ctx.send(file=file)
 
-    @commands.command(brief = "Color shifts",
+    @commands.command(brief = "Color shifts to one color",
                       help = "Colorizes an image. Colors go up to 360.\n" +
                              "The whole image will become shades of one color.\n" +
-                             "0 is red, then cycles around until 360.",
+                             "0 is red, then cycles around until 360.\n" +
+                             "Gifs are not supported.",
                       usage = "([image url] or [mention]) and/or [color value]")
     async def colorize(self, ctx, *, msg = ""):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
@@ -126,10 +132,11 @@ class Avatar(Cog):
         file = discord.File(img_file, filename="colorme.png")
         await ctx.send(f"Hue: {color}",file=file)
 
-    @commands.command(brief = "Color shifts",
+    @commands.command(brief = "Color shifts all hues",
                       help = "Colorizes an image. Colors go up to 360.\n" +
-                             "Shifts all the hues!",
-                      usage = "([image url] or [mention]) and/or [spin value]")
+                             "Shifts all the hues!\n" +
+                             "Gifs are not supported.",
+                      usage = "([image url] | [mention]) and/or [spin value]")
     async def colorme(self, ctx, *, msg = ""):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         color_rot = None

@@ -10,6 +10,7 @@ import discord
 import discord.ext.commands as commands
 from discord.ext.commands import errors
 
+
 activity = discord.Activity(type=config.activity_type,
                             name=config.activity_name)
 

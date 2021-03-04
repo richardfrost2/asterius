@@ -13,7 +13,9 @@ import utils.converters as converters
 class Interactions(Cog):
     """Holds interactions between people."""
 
-    @commands.command(hidden=True)
+    @commands.command(brief="Give some affection",
+                      help="Give someone a hug! The recipient will receive a" +
+                           " DM letting you know how much you care with a GIF.")
     async def hug(self, ctx: commands.Context, target: converters.I_MemberConverter):
         # Can't send a message to yourself. Acknowledge anyway.
         if target == ctx.bot.user:
