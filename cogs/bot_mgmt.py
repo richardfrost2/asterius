@@ -25,7 +25,7 @@ class BotManagement(Cog):
         """Some general information about the bot."""
         async def im_in_guild(ctx) -> bool:
             if ctx.guild is not None:
-                return await ctx.guild.get_member(530420116815478794) is not None
+                return ctx.guild.get_member(530420116815478794) is not None
             else:
                 return False
 
