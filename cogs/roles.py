@@ -71,7 +71,8 @@ class Roles(commands.Cog):
     @commands.command(brief="Add a color",
                       help="Add a color from your inventory. It must be one" +
                            " that you have unlocked. Only available in" +
-                           " the testing server.")
+                           " the testing server.",
+                      usage="<role name>")
     async def equip(self, ctx, *, role_name):
         """Equips a color from your inventory."""
         member = ctx.author

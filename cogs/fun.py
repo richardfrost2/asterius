@@ -20,6 +20,7 @@ class Fun(Cog):
             await ctx.send(f"{ctx.author.mention}, you need to select a valid " + 
                         "emoji.\n(Only custom emojis are accepted.)")
             
+    @commands.is_owner()
     @commands.command(brief="Repeat after me",
                       help="The bot will repeat whatever you say.")
     async def say(self, ctx, *, content):

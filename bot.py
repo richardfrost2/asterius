@@ -9,6 +9,7 @@ import config
 import discord
 import discord.ext.commands as commands
 from discord.ext.commands import errors
+import utils.help
 
 
 activity = discord.Activity(type=config.activity_type,
@@ -20,7 +21,12 @@ intents.members = True
 bot = commands.Bot(command_prefix=when_mentioned_or('$'),
                    owner_id=config.owner,
                    activity=activity,
-                   intents=intents)
+                   intents=intents,
+                   help_command=utils.help.HelpCommand())
+
+for extension in config.extensions:
+    bot.load_extension(extension)
+print("Loading extensions complete!")
 
 @bot.event
 async def on_ready():
@@ -29,9 +35,7 @@ async def on_ready():
     TOO crazy with it.
     """
     print(f"Ready! Logged in as {bot.user}.")
-    for extension in config.extensions:
-        bot.load_extension(extension)
-    print("Default extensions loaded.")
+
 
 @commands.is_owner()
 @bot.command(hidden=True,

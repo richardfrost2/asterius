@@ -1,20 +1,17 @@
 
 import io
-import re
-from datetime import datetime
 import random
-import utils.utils as util
-from utils.colorize import set_hue
-from utils.colorme import shift_hue
+import re
 
+import aiohttp
 import discord
 import discord.ext.commands
-import requests
-import aiohttp
-import asyncio
+import utils.utils as util
 from discord.ext import commands
 from discord.ext.commands import Cog
 from PIL import Image, ImageEnhance
+from utils.colorize import set_hue
+from utils.colorme import shift_hue
 
 
 class Avatar(Cog):
@@ -41,7 +38,7 @@ class Avatar(Cog):
 
 
     @commands.command(brief="Turn an image grayscale.",
-                      usage="[@user] | [url] | [attachment]",
+                      usage="[@user|url|attachment]",
                       help="Turns an image grayscale. Gifs are not supported.")
     async def grayscale(self, ctx):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
@@ -80,7 +77,7 @@ class Avatar(Cog):
                              "The whole image will become shades of one color.\n" +
                              "0 is red, then cycles around until 360.\n" +
                              "Gifs are not supported.",
-                      usage = "([image url] or [mention]) and/or [color value]")
+                      usage = "[@user|url|attachment] [color value]")
     async def colorize(self, ctx, *, msg = ""):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         color = None
@@ -136,7 +133,7 @@ class Avatar(Cog):
                       help = "Colorizes an image. Colors go up to 360.\n" +
                              "Shifts all the hues!\n" +
                              "Gifs are not supported.",
-                      usage = "([image url] | [mention]) and/or [spin value]")
+                      usage = "[@user|url|attachment] [spin value]")
     async def colorme(self, ctx, *, msg = ""):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         color_rot = None

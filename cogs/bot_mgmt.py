@@ -5,7 +5,6 @@ Commands that give information about a discord.py bot.
 For more details, see below.
 """
 import discord
-# from discord.ext.commands import errors
 import utils.utils as util
 from config import repo_link
 from discord.enums import ActivityType
@@ -118,6 +117,7 @@ class BotManagement(Cog):
         await ctx.bot.change_presence(activity=activity)
         await ctx.message.add_reaction("🆗")
 
+    @commands.is_owner()
     @commands.command(hidden=True)
     async def sudo(self, ctx, *, expr = ""):
         """Evaluates a Python expression if used by an owner.
@@ -140,6 +140,7 @@ class BotManagement(Cog):
             await ctx.send(f"`'{ctx.author.name}'' isn't in the sudoers file. " +
                            "This incident will be reported.`")
     
+    @commands.is_owner()
     @commands.command(hidden=True,
                       enabled=False)
     async def sudoexec(self, ctx, *, expr = ""):
@@ -163,6 +164,15 @@ class BotManagement(Cog):
         else:
             await ctx.send(f"`'{ctx.author.name}'' isn't in the sudoers file. " +
                            "This incident will be reported.`")
+
+    @sudo.error
+    @sudoexec.error
+    async def sudo_error(ctx, error):
+        try:
+            raise error()
+        except commands.NotOwner:
+            await ctx.send(f"`'{ctx.author.display_name}' isn't in the " +
+                            "sudoers file. This incident will be reported.`")
 
 def setup(bot: commands.Bot):
     """Adds the cog to the bot when added."""
