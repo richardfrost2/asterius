@@ -21,7 +21,7 @@ class BotManagement(Cog):
 
     @commands.command(aliases=["repo","code"],
                       brief="All about me",
-                      help="Gives some information about the bot, like the" +
+                      help="Gives some information about me, like my" +
                            "author, library, and source code.")
     async def about(self, ctx):
         """Some general information about the bot."""
@@ -118,7 +118,8 @@ class BotManagement(Cog):
         await ctx.message.add_reaction("🆗")
 
     @commands.is_owner()
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      usage="<expression>")
     async def sudo(self, ctx, *, expr = ""):
         """Evaluates a Python expression if used by an owner.
         Note that someone with access can execute arbitrary code.

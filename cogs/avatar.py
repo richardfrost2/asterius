@@ -76,7 +76,8 @@ class Avatar(Cog):
                       help = "Colorizes an image. Colors go up to 360.\n" +
                              "The whole image will become shades of one color.\n" +
                              "0 is red, then cycles around until 360.\n" +
-                             "Gifs are not supported.",
+                             "Gifs are not supported.\n" +
+                             "Default image is your avatar.",
                       usage = "[@user|url|attachment] [color value]")
     async def colorize(self, ctx, *, msg = ""):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
@@ -132,7 +133,7 @@ class Avatar(Cog):
     @commands.command(brief = "Color shifts all hues",
                       help = "Colorizes an image. Colors go up to 360.\n" +
                              "Shifts all the hues!\n" +
-                             "Gifs are not supported.",
+                             "Gifs are not supported. Default is your avatar.",
                       usage = "[@user|url|attachment] [spin value]")
     async def colorme(self, ctx, *, msg = ""):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"

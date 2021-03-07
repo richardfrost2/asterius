@@ -1,4 +1,5 @@
 
+import random
 import re
 
 import discord
@@ -6,6 +7,25 @@ import discord.ext.commands as commands
 from discord.ext.commands import Cog
 
 class Fun(Cog):
+
+
+    @commands.command(brief="Chooses from a selection.",
+                      help="Helps you make a choice between multiple options.",
+                      usage="<option 1> | <option 2> | <option 3> ...",
+                      aliases=["pick","choice","decide","random"])
+    async def choose(self, ctx, *, choices):
+        choices_list = choices.split('|')
+        if len(choices_list) > 1:
+            choice = random.choice(choices_list)
+            await ctx.send(f"{ctx.author.mention}, my choice is **{choice}**.")
+        else:
+            await ctx.send(f"{ctx.author.mention}, you need to give me " +
+                    "multiple options! `a | b ...`",
+                     delete_after=20)
+
+
+
+
 
     @commands.command(brief="Show custom emoji",
                       help="Shows a bigger version of a custom emoji. Useful for stealing.",

@@ -49,7 +49,8 @@ async def _exit(ctx):
 @bot.group(name='modules',
            invoke_without_command=True,
            brief="Manage loaded extensions.",
-           help="Lets you manage extensions loaded.",
+           help="Lets you manage extensions loaded.\n" +
+                "Run without a subcommand to view loaded extensions.",
            hidden=True)
 async def modules(ctx):
     """Shows a list of loaded extensions."""
@@ -63,7 +64,11 @@ async def modules(ctx):
     return
 
 @commands.is_owner()
-@modules.command()
+@modules.command(brief="Adds an extension.",
+                 help="Loads an extension. Most of them are in the `cogs` " +
+                      "folder.",
+                 aliases=["load"],
+                 usage="<extension name>")
 async def add(ctx, extension):
     """Adds an extension"""
     try:
@@ -79,7 +84,10 @@ async def add(ctx, extension):
         await ctx.send("`[Extension encountered an error setting up.]`")
 
 @commands.is_owner()
-@modules.command()
+@modules.command(brief="Removes an extension.",
+                 help="Removes an extension from memory.",
+                 aliases=["unload"],
+                 usage="<extension name>")
 async def remove(ctx, extension):
     """Removes an extension"""
     try:
@@ -89,7 +97,10 @@ async def remove(ctx, extension):
         await ctx.send("`[Extension not loaded.]`")
 
 @commands.is_owner()
-@modules.command()
+@modules.command(brief="Reloads an extension.",
+                 help="Reloads an extension.",
+                 aliases=["restart"],
+                 usage="<extension name>")
 async def reload(ctx, extension):
     """Reloads an extension"""
     try:

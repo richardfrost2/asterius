@@ -37,7 +37,7 @@ class Interactions(Cog):
                          icon_url=ctx.author.avatar_url)
         embed.set_image(url=hug_gif)
         await target.send(embed=embed)
-        await ctx.send(f"Hug on the way!", delete_after=5)
+        await ctx.send(f"Hug on the way!", delete_after=10)
 
     @hug.error
     async def hug_error(self, ctx, error):
@@ -48,7 +48,8 @@ class Interactions(Cog):
         elif isinstance(error, commands.errors.MissingRequiredArgument):
             await self.hug(ctx, ctx.author)
         else:
-            await ctx.send("something happened o_O")
+            await ctx.send("something unusual happened o_O",
+                           delete_after=10)
 
 def setup(bot):
     bot.add_cog(Interactions())
