@@ -6,7 +6,7 @@ For more details, see below.
 """
 import discord
 import utils.utils as util
-from config import repo_link
+from config import REPO_LINK
 from discord.enums import ActivityType
 from discord.ext import commands
 from discord.ext.commands import Cog
@@ -45,7 +45,7 @@ class BotManagement(Cog):
                         value=DISCORDPY_LINK + ' ' + discord.__version__,
                         inline=False)
         embed.add_field(name="Code Repo",
-                        value='[Available here!](' + repo_link + ')',
+                        value='[Available here!](' + REPO_LINK + ')',
                         inline=False)
         await ctx.send(embed=embed)
 

@@ -9,7 +9,7 @@ class Embed(discord.Embed):
     def __init__(self):
         """Creates a new embed."""
         super().__init__()
-        self.color = config.embed_color
+        self.color = config.EMBED_COLOR
         self.timestamp = datetime.datetime.now()
 
 

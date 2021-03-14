@@ -12,19 +12,19 @@ from discord.ext.commands import errors
 import utils.help
 
 
-activity = discord.Activity(type=config.activity_type,
-                            name=config.activity_name)
+activity = discord.Activity(type=config.ACTIVITY_TYPE,
+                            name=config.ACTIVITY_NAME)
 
 intents = discord.Intents.default()
 intents.members = True
 
 bot = commands.Bot(command_prefix=when_mentioned_or('$'),
-                   owner_id=config.owner,
+                   owner_id=config.OWNER,
                    activity=activity,
                    intents=intents,
                    help_command=utils.help.HelpCommand())
 
-for extension in config.extensions:
+for extension in config.EXTENSIONS:
     bot.load_extension(extension)
 print("Loading extensions complete!")
 
@@ -126,4 +126,4 @@ async def on_message(message):
     await bot.process_commands(message)
 
 if __name__ == "__main__":
-    bot.run(config.token)
+    bot.run(config.TOKEN)

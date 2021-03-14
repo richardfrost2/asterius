@@ -11,14 +11,14 @@ from discord.ext import commands
 
 import utils.utils as util
 
-roles_to_colors = {760690161033019423 : 776197851407319070,  # Staff
+ROLES_TO_COLORS = {760690161033019423 : 776197851407319070,  # Staff
                    816150880730218576 : 816150975022104666,  # Developers
                    816151271693877258 : 816151442481217618,  # LDSG
                    816151794061148161 : 816151877074419743,  # Cute <3
                    816152516185423902 : 816152578186280960,  # Trusted
                   }
 
-all_color_role_ids = [i[1] for i in roles_to_colors.items()]
+ALL_COLOR_ROLES = [i[1] for i in ROLES_TO_COLORS.items()]
 # ^^ Gets the value for each item in the dictionary.
 
 class Roles(commands.Cog):
@@ -49,8 +49,8 @@ class Roles(commands.Cog):
         member_rev_roles.reverse()
         # Get the user's role colors.
         for role in member_rev_roles:
-            if role.id in roles_to_colors:
-                color_role = guild.get_role(roles_to_colors[role.id])
+            if role.id in ROLES_TO_COLORS:
+                color_role = guild.get_role(ROLES_TO_COLORS[role.id])
                 color_roles.append(color_role)
         # If there are roles, build and send the embed.
         if color_roles:
@@ -87,14 +87,14 @@ class Roles(commands.Cog):
             await ctx.send(f"{member.mention}, you don't have that role.\n" +
                            "Try `!inventory` to see a list of available roles.",
                            delete_after=15)
-        elif role.id not in roles_to_colors:
+        elif role.id not in ROLES_TO_COLORS:
             await ctx.send(f"{member.mention}, that role isn't equippable.\n" +
                            "Try `!inventory` to see a list of available roles.",
                            delete_after=15)
         else:
             # It exists, the member has it, and it's equippable.
-            await member.remove_roles(*[discord.Object(i) for i in all_color_role_ids])
-            added_color_role = guild.get_role(roles_to_colors[role.id])
+            await member.remove_roles(*[discord.Object(i) for i in ALL_COLOR_ROLES])
+            added_color_role = guild.get_role(ROLES_TO_COLORS[role.id])
             await member.add_roles(added_color_role)
             await ctx.message.add_reaction("👌")
 
@@ -102,7 +102,7 @@ class Roles(commands.Cog):
                       help="Removes any colors you have equipped. Only " +
                            "available in the test server.")
     async def unequip(self, ctx):
-        await ctx.author.remove_roles(*[discord.Object(i) for i in all_color_role_ids])
+        await ctx.author.remove_roles(*[discord.Object(i) for i in ALL_COLOR_ROLES])
         await ctx.message.add_reaction("👌")
 
 
