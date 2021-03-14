@@ -3,7 +3,7 @@
 from discord.enums import ActivityType
 
 # Bot token - keep private!
-TOKEN = "ODA2NzI0MDA1MzE3ODM2ODUx.YBtmRw.z6oMEU3RBnVVb9olebU3L3izit0"
+TOKEN = ""
 # Owner user ID - int
 OWNER = 530420116815478794  # richardfrost#5699 on 2-6-21
 # Activity settings
