@@ -25,12 +25,13 @@ class Filter(commands.Cog):
                 await message.add_reaction('😠')
                 # 'this is a f*cking censored word' gives 53%.
                 # 'wrath' gives 66%.
+                # 'what the heck did you say about me, you little jerk?' is 98%.
                 # Take results with a grain of salt.
 
-    @commands.command(hidden = True,
-                      brief = "Watch your profanity!",
+    @commands.command(brief = "Watch your profanity!",
                       help = "View a message's profanity score.\n"
                              r"Generally a score over 50% is bad.",
+                      usage = "<message>",
                       description = "Powered by alt-profanity-check 0.24.0")
     async def profanity(self, ctx, *, message):
         """Check your message's profanity score."""
