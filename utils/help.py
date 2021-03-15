@@ -38,6 +38,8 @@ class HelpCommand(commands.DefaultHelpCommand):
                 if command.aliases:
                     embed.add_field(name="Aliases", value=", ".join(command.aliases),
                                     inline=False)
+                if command.description:
+                    embed.set_footer(text = command.description)
                 await self.get_destination().send(embed=embed)
             else:
                 await self.get_destination().send("You can't run this command here.\n",
