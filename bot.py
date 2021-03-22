@@ -2,7 +2,9 @@
 Main part of the bot.
 """
 
-import asyncio
+import re
+import sys
+import traceback
 
 from discord.ext.commands.bot import when_mentioned_or
 import config
@@ -10,6 +12,7 @@ import discord
 import discord.ext.commands as commands
 from discord.ext.commands import errors
 import utils.help
+import utils.utils as util
 
 
 activity = discord.Activity(type=config.ACTIVITY_TYPE,
@@ -124,6 +127,55 @@ async def on_message(message):
         print("[DM] ", end = '')
     print(f"{message.author}: {message.clean_content}")
     await bot.process_commands(message)
+
+@bot.event
+async def on_command_error(ctx, exc):
+    """Handles errors in this bot."""
+    ignored = (commands.CommandNotFound, commands.NotOwner)
+    # If the command has an error handler, ignore it.
+    if hasattr(ctx.command, 'on_error'):
+        return
+    # If the cog has an error handler, also ignore.
+    if (ctx.cog is not None and 
+        ctx.cog._get_overridden_method(ctx.cog.cog_command_error) is not None):
+        return
+    # Catch common errors before printing tracebacks.
+    if isinstance(exc, ignored):
+        return
+    if isinstance(exc, commands.DisabledCommand):
+        await ctx.send(f"That command is currently disabled.",
+                       delete_after=15)
+        return
+    if isinstance(exc, commands.NoPrivateMessage):
+        await ctx.send(f"This command can only be used in servers.")
+        return
+    if isinstance(exc, (commands.BadArgument, commands.MissingRequiredArgument)):
+        await ctx.send(f"I can't understand the input.\n"
+                        f"Usage: `{ctx.prefix}{ctx.command.qualified_name} "
+                        f"{ctx.command.usage}`",
+                        delete_after=15)
+    else:
+        ### Send traceback to the errors channel via a webhook.
+        # Get the webhook. (The channel only has one webhook)
+        err_channel = bot.get_channel(config.ERROR_CHANNEL)
+        webhook = (await err_channel.webhooks())[0]
+        # Create webhook frame.
+        error_embed = util.Embed()
+        error_embed.title = type(exc).__name__
+        error_embed.color = discord.Color.red()
+        error_embed.description = "Message: " + str(exc)
+        error_embed.set_author(name=bot.user.display_name,
+                               icon_url=bot.user.avatar_url)
+        # Get the traceback, and remove identifying file names.
+        traceback_str = ''.join(traceback.format_tb(exc.__traceback__))
+        paths_lower = [path.capitalize() for path in sys.path]
+        all_paths_re = '(?:' + ")|(?:".join(paths_lower) + ')'
+        all_paths_re = re.sub(r'\\', r'\\\\', all_paths_re)
+        traceback_str = re.sub(all_paths_re, '', traceback_str)
+        # Add the traceback to the embed.
+        error_embed.add_field(name="Traceback", value=traceback_str)
+        await webhook.send(embed=error_embed)
+    
 
 if __name__ == "__main__":
     bot.run(config.TOKEN)

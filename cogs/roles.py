@@ -27,9 +27,13 @@ class Roles(commands.Cog):
         # """These commands only work in frost's test server."""
         if ctx.guild:
             return ctx.guild.id == 755940090362200168
-        return False
+        raise NotInGuild()
 
     async def cog_command_error(self, ctx, error):
+        if isinstance(error, NotInGuild):
+            await ctx.send("This command can only be used in the testing "
+                           "server.",
+                           delete_after=15)
         if isinstance(error, commands.errors.CheckFailure):
             return
         else:
@@ -44,6 +48,7 @@ class Roles(commands.Cog):
         """Sends an embed with the available color list."""
         member = ctx.author
         guild = ctx.guild
+        pref = ctx.prefix
         color_roles = []
         member_rev_roles = member.roles
         member_rev_roles.reverse()
@@ -58,9 +63,9 @@ class Roles(commands.Cog):
             embed.set_author(name = member.display_name, 
                              icon_url = member.avatar_url)
             embed.title = "Equippable Color Inventory"
-            embed.description = ("Equip a color role by using `!equip role" +
+            embed.description = (f"Equip a color role by using `{pref}equip role" +
                                  " name` without the 'Colors'. \n" +
-                                 "e.g. `!equip Trusted`\n\n")
+                                 f"e.g. `{pref}equip Trusted`\n\n")
             embed.description += '\n'.join([r.mention for r in color_roles])
             await ctx.send(embed=embed)
         # If not, tell the user.
@@ -77,19 +82,20 @@ class Roles(commands.Cog):
         """Equips a color from your inventory."""
         member = ctx.author
         guild = ctx.guild
+        pref = ctx.prefix
         role = discord.utils.find(lambda r: r.name.lower() == role_name.lower(), 
                                   guild.roles)
         if not bool(role):
             await ctx.send(f"{member.mention}, that is not a valid role.\n" +
-                           "Try `!inventory` to see a list of available roles.",
+                           f"Try `{pref}inventory` to see a list of available roles.",
                            delete_after=15)
         elif role not in member.roles:
             await ctx.send(f"{member.mention}, you don't have that role.\n" +
-                           "Try `!inventory` to see a list of available roles.",
+                           f"Try `{pref}inventory` to see a list of available roles.",
                            delete_after=15)
         elif role.id not in ROLES_TO_COLORS:
             await ctx.send(f"{member.mention}, that role isn't equippable.\n" +
-                           "Try `!inventory` to see a list of available roles.",
+                           f"Try `{pref}inventory` to see a list of available roles.",
                            delete_after=15)
         else:
             # It exists, the member has it, and it's equippable.
@@ -105,7 +111,9 @@ class Roles(commands.Cog):
         await ctx.author.remove_roles(*[discord.Object(i) for i in ALL_COLOR_ROLES])
         await ctx.message.add_reaction("👌")
 
-
+class NotInGuild(commands.CheckFailure):
+    """Raised when the context is not in the testing server."""
+    pass
 
 def setup(bot):
     bot.add_cog(Roles())
