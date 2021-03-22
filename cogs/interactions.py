@@ -27,7 +27,8 @@ class Interactions(Cog):
                 if not resp_json["error"]:
                     hug_gif = resp_json["link"]
                 else:
-                    await ctx.send(f"`[Error in Purrbot's servers: '{resp_json['message']}'. Sorry!]`")
+                    await ctx.send("`[Error in Purrbot's servers: "
+                                   f"'{resp_json['message']}'. Sorry!]`")
                     return
         # Construct embed to send
         embed = util.Embed()
@@ -37,13 +38,13 @@ class Interactions(Cog):
                          icon_url=ctx.author.avatar_url)
         embed.set_image(url=hug_gif)
         await target.send(embed=embed)
-        await ctx.send(f"Hug on the way!", delete_after=10)
+        await ctx.send("Hug on the way!", delete_after=10)
 
     @hug.error
     async def hug_error(self, ctx, error):
         if isinstance(error, commands.errors.MemberNotFound):
             await ctx.send(f"{ctx.author.mention}, I couldn't find them.")
-        elif isinstance(error, discord.HTTPException) or isinstance(error, discord.errors.Forbidden):
+        elif isinstance(error, (discord.HTTPException, discord.errors.Forbidden)):
             await ctx.send(f"{ctx.author.mention}, I couldn't send it to them. Maybe I'm blocked?")
         elif isinstance(error, commands.errors.MissingRequiredArgument):
             await self.hug(ctx, ctx.author)

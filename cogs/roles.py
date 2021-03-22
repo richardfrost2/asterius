@@ -6,7 +6,6 @@ MIT License
 """
 
 import discord
-from discord.embeds import Embed
 from discord.ext import commands
 
 import utils.utils as util

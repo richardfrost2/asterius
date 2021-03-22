@@ -6,14 +6,14 @@ import re
 import sys
 import traceback
 
-from discord.ext.commands.bot import when_mentioned_or
-import config
 import discord
 import discord.ext.commands as commands
 from discord.ext.commands import errors
+from discord.ext.commands.bot import when_mentioned_or
+
+import config
 import utils.help
 import utils.utils as util
-
 
 activity = discord.Activity(type=config.ACTIVITY_TYPE,
                             name=config.ACTIVITY_NAME)
@@ -33,10 +33,7 @@ print("Loading extensions complete!")
 
 @bot.event
 async def on_ready():
-    """Loads all extensions.
-    This may fire multiple times (i.e. after debugging) so don't do anything
-    TOO crazy with it.
-    """
+    """When the bot is ready. Don't do too much here."""
     print(f"Ready! Logged in as {bot.user}.")
 
 
@@ -124,7 +121,7 @@ async def on_message(message):
     if message.guild is not None:
         print(f"[{message.guild.name[:8]}#{message.channel.name[:8]}] ", end = '')
     else:
-        print("[DM] ", end = '')
+        print(f"[DM {message.channel.recipient}] ", end = '')
     print(f"{message.author}: {message.clean_content}")
     await bot.process_commands(message)
 
@@ -136,24 +133,25 @@ async def on_command_error(ctx, exc):
     if hasattr(ctx.command, 'on_error'):
         return
     # If the cog has an error handler, also ignore.
-    if (ctx.cog is not None and 
+    if (ctx.cog is not None and
         ctx.cog._get_overridden_method(ctx.cog.cog_command_error) is not None):
         return
     # Catch common errors before printing tracebacks.
     if isinstance(exc, ignored):
         return
     if isinstance(exc, commands.DisabledCommand):
-        await ctx.send(f"That command is currently disabled.",
+        await ctx.send("That command is currently disabled.",
                        delete_after=15)
         return
     if isinstance(exc, commands.NoPrivateMessage):
-        await ctx.send(f"This command can only be used in servers.")
+        await ctx.send("This command can only be used in servers.",
+                       delete_after=15)
         return
     if isinstance(exc, (commands.BadArgument, commands.MissingRequiredArgument)):
-        await ctx.send(f"I can't understand the input.\n"
-                        f"Usage: `{ctx.prefix}{ctx.command.qualified_name} "
-                        f"{ctx.command.usage}`",
-                        delete_after=15)
+        await ctx.send("I can't understand the input.\n"
+                       f"Usage: `{ctx.prefix}{ctx.command.qualified_name} "
+                       f"{ctx.command.usage}`",
+                       delete_after=15)
     else:
         ### Send traceback to the errors channel via a webhook.
         # Get the webhook. (The channel only has one webhook)
@@ -175,7 +173,6 @@ async def on_command_error(ctx, exc):
         # Add the traceback to the embed.
         error_embed.add_field(name="Traceback", value=traceback_str)
         await webhook.send(embed=error_embed)
-    
 
 if __name__ == "__main__":
     bot.run(config.TOKEN)
