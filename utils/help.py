@@ -1,7 +1,10 @@
 """Help command for Asterius."""
 
+import math
+
 import discord
 from discord.ext import commands
+
 import utils.utils as util
 
 COMMANDS_PER_PAGE = 10
@@ -57,7 +60,7 @@ class HelpCommand(commands.DefaultHelpCommand):
         group_commands = await self.filter_commands(group.commands, sort=True)
         pagify = False if len(group_commands) <= 10 else True
         if pagify:
-            pages = (len(group_commands) // COMMANDS_PER_PAGE) + 1
+            pages = math.ceil(len(group_commands) / COMMANDS_PER_PAGE)
             page_on = 1
         for index, command in enumerate(group_commands):
             embed.add_field(name=command.name,
@@ -83,7 +86,7 @@ class HelpCommand(commands.DefaultHelpCommand):
         embed.description = self.get_ending_note()
         cog_commands = await self.filter_commands(cog.get_commands(),
                                                     sort=True)
-        pages = (len(cog_commands) // COMMANDS_PER_PAGE) + 1
+        pages = math.ceil(len(cog_commands) / COMMANDS_PER_PAGE)
         page_on = 1
         for index, command in enumerate(cog_commands):
             embed.add_field(name=self.clean_prefix + command.name,
@@ -109,7 +112,7 @@ class HelpCommand(commands.DefaultHelpCommand):
         embed = util.Embed()
         embed.title = f"Commands for {self.context.bot.user.name}"
         embed.description = self.get_ending_note()
-        pages = (len(all_commands) // COMMANDS_PER_PAGE) + 1
+        pages = math.ceil(len(all_commands) / COMMANDS_PER_PAGE)
         page_on = 1
         for index, command in enumerate(all_commands):
             embed.add_field(name=self.clean_prefix + command.name,
