@@ -9,7 +9,7 @@ import discord.ext.commands
 import utils.utils as util
 from discord.ext import commands
 from discord.ext.commands import Cog
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageFilter
 from utils.colorize import set_hue
 from utils.colorme import shift_hue
 
@@ -36,6 +36,39 @@ class Avatar(Cog):
         if postable:
             await ctx.send(embed=embed)
 
+    @commands.command(brief="Blurs an image.",
+                      usage="[@user|url|attachment]",
+                      help="Blurs an image. Gifs are not supported.")
+    async def blur(self, ctx):
+        url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+        # Get image to grayscale.
+        img_in = io.BytesIO()
+        if len(ctx.message.attachments) > 0:
+            await ctx.message.attachments[0].save(img_in)
+        elif len(ctx.message.mentions) > 0:
+            await ctx.message.mentions[0].avatar_url.save(img_in)
+        elif (match := re.search(url_regex, ctx.message.clean_content)):
+            url = match.group()
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as resp:
+                    img_in = io.BytesIO()
+                    img_in.write(await resp.read())
+                    img_in.seek(0)
+        else:
+            await ctx.author.avatar_url.save(img_in)
+
+        try:
+            img = Image.open(img_in)
+        except:
+            await ctx.send("I can't open that file! I need an image.")
+            return
+
+        img = img.filter(ImageFilter.GaussianBlur(0.02*max(img.size)))
+        img_out = io.BytesIO()
+        img.save(img_out, format="PNG")
+        img_out.seek(0)
+        file = discord.File(img_out, filename="blur.png")
+        await ctx.send(file=file)
 
     @commands.command(brief="Turn an image grayscale.",
                       usage="[@user|url|attachment]",
@@ -128,8 +161,12 @@ class Avatar(Cog):
         img_file = io.BytesIO()
         img.save(img_file, format="PNG")
         img_file.seek(0)
-        file = discord.File(img_file, filename="colorme.png")
-        await ctx.send(f"Hue: {color}",file=file)
+        file = discord.File(img_file, filename="colorize.png")
+        # await ctx.send(f"Hue: {color}",file=file)
+        embed = util.Embed()
+        embed.set_image(url="attachment://colorize.png")
+        embed.set_footer(text=f"Hue: {color}")
+        await ctx.send(embed=embed, file=file)        
 
     @commands.command(brief = "Color shifts all hues",
                       help = "Colorizes an image. Colors go up to 360.\n" +
@@ -186,7 +223,11 @@ class Avatar(Cog):
         img.save(img_file, format="PNG")
         img_file.seek(0, 0)
         file = discord.File(img_file, filename="colorme.png")
-        await ctx.send(f"Rotation value: {color_rot}", file=file)
+        # await ctx.send(f"Rotation value: {color_rot}", file=file)
+        embed = util.Embed()
+        embed.set_image(url="attachment://colorme.png")
+        embed.set_footer(text=f"Spin Value: {color_rot}")
+        await ctx.send(embed=embed, file=file)
 
 
 def setup(bot):

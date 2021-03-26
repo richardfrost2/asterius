@@ -80,8 +80,9 @@ async def add(ctx, extension):
         await ctx.send("`[Extension not found.]`")
     except errors.NoEntryPointError:
         await ctx.send("`[No entry point. Define 'setup' to continue.]`")
-    except errors.ExtensionError:
+    except errors.ExtensionError as err:
         await ctx.send("`[Extension encountered an error setting up.]`")
+        raise err
 
 @commands.is_owner()
 @modules.command(brief="Removes an extension.",
@@ -112,8 +113,9 @@ async def reload(ctx, extension):
         await ctx.send("`[Extension not found! It may have been removed.]`")
     except errors.NoEntryPointError:
         await ctx.send("`[No entry point. Define 'setup' to continue.]`")
-    except errors.ExtensionError:
+    except errors.ExtensionError as err:
         await ctx.send("`[Extension encountered an error setting up.]`")
+        raise err
 
 @bot.event
 async def on_message(message):
