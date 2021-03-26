@@ -14,8 +14,11 @@ EXTENSIONS = ['cogs.avatar',
               'cogs.bot_mgmt',
               'cogs.fun',
               'cogs.interactions',
+              'cogs.messages',
               'cogs.roles']
 # Link to the repo for the !about command.
 REPO_LINK = "https://github.com/richardfrost2/asterius"
 # Default embed color
 EMBED_COLOR = 0x451d93
+# Error reporting channel. Has only one webhook.
+ERROR_CHANNEL = 0
