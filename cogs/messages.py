@@ -61,7 +61,8 @@ class Messages(Cog):
         else:
             msg = reaction.message
             embed = util.Embed()
-            embed.set_author(name=msg.author, icon_url=msg.author.avatar_url)
+            embed.set_author(name=msg.author.display_name,
+                             icon_url=msg.author.avatar_url)
             embed.description = msg.clean_content
             embed.timestamp = msg.created_at
             if msg.guild:
