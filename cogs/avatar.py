@@ -63,7 +63,7 @@ class Avatar(Cog):
             await ctx.send("I can't open that file! I need an image.")
             return
 
-        img = img.filter(ImageFilter.GaussianBlur(0.02*max(img.size)))
+        img = img.filter(ImageFilter.GaussianBlur(0.02*min(img.size)))
         img_out = io.BytesIO()
         img.save(img_out, format="PNG")
         img_out.seek(0)
