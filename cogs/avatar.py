@@ -72,7 +72,8 @@ class Avatar(Cog):
 
     @commands.command(brief="Turn an image grayscale.",
                       usage="[@user|url|attachment]",
-                      help="Turns an image grayscale. Gifs are not supported.")
+                      help="Turns an image grayscale. Gifs are not supported.",
+                      aliases=["greyscale"])
     async def grayscale(self, ctx):
         url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
         # Get image to grayscale.

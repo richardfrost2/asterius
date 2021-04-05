@@ -149,7 +149,8 @@ async def on_command_error(ctx, exc):
         await ctx.send("This command can only be used in servers.",
                        delete_after=15)
         return
-    if isinstance(exc, (commands.BadArgument, commands.MissingRequiredArgument)):
+    if isinstance(exc, (commands.BadArgument, commands.MissingRequiredArgument,
+                        commands.TooManyArguments)):
         await ctx.send("I can't understand the input.\n"
                        f"Usage: `{ctx.prefix}{ctx.command.qualified_name} "
                        f"{ctx.command.usage}`",
@@ -172,8 +173,11 @@ async def on_command_error(ctx, exc):
         all_paths_re = '(?:' + ")|(?:".join(paths_lower) + ')'
         all_paths_re = re.sub(r'\\', r'\\\\', all_paths_re)
         traceback_str = re.sub(all_paths_re, '', traceback_str)
+        if len(traceback_str) > 1024:
+            print(traceback_str)
+            traceback_str = "Traceback too long! Printing to console."
         # Add the traceback to the embed.
-        error_embed.add_field(name="Traceback", value=traceback_str)
+        error_embed.add_field(name="Traceback", value=traceback_str or "Traceback not available.")
         await webhook.send(embed=error_embed)
 
 if __name__ == "__main__":
