@@ -31,7 +31,10 @@ bot = commands.Bot(command_prefix=when_mentioned_or('$'),
                    help_command=utils.help.HelpCommand())
 
 for extension in config.EXTENSIONS:
-    bot.load_extension(extension)
+    try:
+        bot.load_extension(extension)
+    except:
+        logging.log(logging.ERROR, "Failed to load extension {extension}!")
 print("Loading extensions complete!")
 
 @bot.event
