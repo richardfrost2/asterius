@@ -119,17 +119,10 @@ class BotManagement(Cog):
 
     @commands.is_owner()
     @commands.command(hidden=True,
-                      usage="<expression>")
+                      usage="<expression>",
+                      enabled=False)
     async def sudo(self, ctx, *, expr = ""):
-        """Evaluates a Python expression if used by an owner.
-        Note that someone with access can execute arbitrary code.
-        However, they are still constrained by the permissions given
-        to the bot.
-
-        I mean, I promise I won't be nefarious, but your security is yours.
-
-        Although lacking @is_owner, this command is still secured.
-        """
+        """Depricated. Use jishaku instead."""
         if (ctx.author.id == ctx.bot.owner_id or ctx.author.id in ctx.bot.owner_ids):
             # Keep peeps accountable.
             print(f"PROCESSING: {ctx.author.name} executed {expr}")
@@ -145,15 +138,7 @@ class BotManagement(Cog):
     @commands.command(hidden=True,
                       enabled=False)
     async def sudoexec(self, ctx, *, expr = ""):
-        """Executes arbitrary Python code iff the author is a bot owner.
-        Note that someone with access can execute arbitrary code.
-        However, they are still constrained by the permissions given
-        to the bot.
-
-        I mean, I promise I won't be nefarious, but your security is yours.
-
-        Although lacking @is_owner, this command is still secured.
-        """
+        """Depricated. Use jishaku instead."""
         if (ctx.author.id == ctx.bot.owner_id or ctx.author.id in ctx.bot.owner_ids):
             # Keep peeps accountable.
             print(f"PROCESSING: {ctx.author.name} executed {expr}")
@@ -166,14 +151,14 @@ class BotManagement(Cog):
             await ctx.send(f"`'{ctx.author.name}'' isn't in the sudoers file. " +
                            "This incident will be reported.`")
 
-    @sudo.error
-    @sudoexec.error
-    async def sudo_error(ctx, error):
-        try:
-            raise error()
-        except commands.NotOwner:
-            await ctx.send(f"`'{ctx.author.display_name}' isn't in the " +
-                            "sudoers file. This incident will be reported.`")
+    # @sudo.error
+    # @sudoexec.error
+    # async def sudo_error(ctx, error):
+    #     try:
+    #         raise error()
+    #     except commands.NotOwner:
+    #         await ctx.send(f"`'{ctx.author.display_name}' isn't in the " +
+    #                         "sudoers file. This incident will be reported.`")
 
 def setup(bot: commands.Bot):
     """Adds the cog to the bot when added."""

@@ -2,6 +2,7 @@
 Main part of the bot.
 """
 
+import logging
 import re
 import sys
 import traceback
@@ -14,6 +15,8 @@ from discord.ext.commands.bot import when_mentioned_or
 import config
 import utils.help
 import utils.utils as util
+
+logging.basicConfig(level=logging.INFO)
 
 activity = discord.Activity(type=config.ACTIVITY_TYPE,
                             name=config.ACTIVITY_NAME)
@@ -117,17 +120,17 @@ async def reload(ctx, extension):
         await ctx.send("`[Extension encountered an error setting up.]`")
         raise err
 
-@bot.event
-async def on_message(message):
-    """Prints all received messages to console."""
-    if message.guild is not None:
-        print(f"[{message.guild.name[:8]}#{message.channel.name[:8]}] ", end = '')
-    else:
-        print(f"[DM {message.channel.recipient}] ", end = '')
-    print(f"{message.author}: {message.clean_content}")
-    await bot.process_commands(message)
+# @bot.event
+# async def on_message(message):
+#     """Prints all received messages to console."""
+#     if message.guild is not None:
+#         print(f"[{message.guild.name[:8]}#{message.channel.name[:8]}] ", end = '')
+#     else:
+#         print(f"[DM {message.channel.recipient}] ", end = '')
+#     print(f"{message.author}: {message.clean_content}")
+#     await bot.process_commands(message)
 
-@bot.event
+@bot.listen()
 async def on_command_error(ctx, exc):
     """Handles errors in this bot."""
     ignored = (commands.CommandNotFound, commands.NotOwner)
@@ -137,6 +140,12 @@ async def on_command_error(ctx, exc):
     # If the cog has an error handler, also ignore.
     if (ctx.cog is not None and
         ctx.cog._get_overridden_method(ctx.cog.cog_command_error) is not None):
+        return
+    # Catch jishaku errors with a funny message.
+    if (ctx.cog and ctx.cog.qualified_name == 'jishaku'
+        and isinstance(exc, commands.NotOwner)):
+        await ctx.send(f"`'{ctx.author.display_name}' isn't in the " +
+                        "sudoers file. This incident will be reported.`")
         return
     # Catch common errors before printing tracebacks.
     if isinstance(exc, ignored):
