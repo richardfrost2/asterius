@@ -2,11 +2,13 @@
 Main part of the bot.
 """
 
+import asyncio
 import logging
 import re
 import sys
 import traceback
 
+import asyncpg
 import discord
 import discord.ext.commands as commands
 from discord.ext.commands import errors
@@ -194,4 +196,5 @@ async def on_command_error(ctx, exc):
         await webhook.send(embed=error_embed)
 
 if __name__ == "__main__":
+    bot.db = asyncio.run_until_complete(asyncpg.create_pool(**config.DB_INFO))
     bot.run(config.TOKEN)

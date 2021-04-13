@@ -26,7 +26,10 @@ EMBED_COLOR = 0x451d93
 ERROR_CHANNEL = 0
 
 # Database Information
-DB_HOSTNAME = ""
-DB_USERNAME = ""
-DB_PASSWORD = ""
-DB_DATABASE = ""
+DB_INFO = {
+    'host':'',
+    'port':5432,
+    'user':'',
+    'password':'',
+    'database':'',
+}
