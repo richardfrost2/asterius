@@ -11,7 +11,7 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     @commands.command(usage="[member]")
-    async def info(self, ctx, member: converters.I_MemberConverter = None):
+    async def info(self, ctx, *, member: converters.I_MemberConverter = None):
         """Get information on a member."""
         if member is None:
             member = ctx.author
