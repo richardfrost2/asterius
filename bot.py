@@ -34,9 +34,9 @@ for extension in config.EXTENSIONS:
     try:
         bot.load_extension(extension)
     except Exception as err:
-        print(err)
-        logging.log(logging.ERROR, "Failed to load extension {extension}!")
-print("Loading extensions complete!")
+        logging.log(logging.ERROR, f"Failed to load extension {extension}!")
+        logging.log(logging.ERROR, err)
+logging.log(logging.INFO, "Loading extensions complete!")
 
 @bot.event
 async def on_ready():
@@ -187,7 +187,7 @@ async def on_command_error(ctx, exc):
         all_paths_re = re.sub(r'\\', r'\\\\', all_paths_re)
         traceback_str = re.sub(all_paths_re, '', traceback_str)
         if len(traceback_str) > 1024:
-            print(traceback_str)
+            logging.log(logging.ERROR, traceback_str)
             traceback_str = "Traceback too long! Printing to console."
         # Add the traceback to the embed.
         error_embed.add_field(name="Traceback", value=traceback_str or "Traceback not available.")

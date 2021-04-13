@@ -133,3 +133,4 @@ history/
 config.py
 cogs/dev.py
 dev
+.vscode
