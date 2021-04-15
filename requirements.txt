@@ -4,3 +4,4 @@ Pillow>=8.1.0
 #webp>=0.1.0 # Does not work on ARM architecture
 jishaku>=1.20.0.220
 alt-profanity-check>=0.24.0
+asyncpg
