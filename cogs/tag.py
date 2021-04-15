@@ -101,6 +101,11 @@ class Tags(commands.Cog):
         else:
             await ctx.send("That tag name is reserved.")
 
+    @commands.guild_only()
+    @tag.command(brief="Transfers a tag/alias",
+                 help="Transfers a tag or alias to someone else. The other "
+                      "person must confirm the transfer.",
+                 usage="<member> <tag name>")
     async def transfer(self, ctx, member: conv.I_MemberConverter, tagname):
         """Transfers a tag to another member."""
         tag_tup = await self._find_tag_or_alias(ctx, tagname)
