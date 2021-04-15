@@ -196,5 +196,6 @@ async def on_command_error(ctx, exc):
         await webhook.send(embed=error_embed)
 
 if __name__ == "__main__":
-    bot.db = asyncio.run_until_complete(asyncpg.create_pool(**config.DB_INFO))
+    temploop = asyncio.get_event_loop()
+    bot.db = temploop.run_until_complete(asyncpg.create_pool(**config.DB_INFO))
     bot.run(config.TOKEN)
