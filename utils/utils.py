@@ -15,6 +15,8 @@ class Embed(discord.Embed):
 
 
 async def confirm(ctx: commands.Context, *,
+                  target_user = None,
+                  channel = None,
                   prompt = "Are you sure?",
                   fields = {},
                   timeout = 15):
@@ -22,6 +24,8 @@ async def confirm(ctx: commands.Context, *,
 
     **Parameters**
     ctx: Context
+    target_user: The user to target with the embed. Default is ctx.author.
+    channel: The channel for the embed to appear. Default is ctx.channel.
     prompt: The description of the embed. 
     fields: Additional fields for the embed. Optional.
       This should be a dict in {name: value} format.
@@ -31,22 +35,37 @@ async def confirm(ctx: commands.Context, *,
     buttons = ['✅', '⛔']
     embed = Embed()
     embed.color = discord.Color(0xff0000)
-    embed.set_author(name=ctx.author.display_name,
-                     icon_url=ctx.author.avatar_url)
+    if target_user:
+        embed.set_author(name=target_user.display_name,
+                         icon_url=target_user.avatar_url)
+    else:
+        embed.set_author(name=ctx.author.display_name,
+                         icon_url=ctx.author.avatar_url)
     embed.title = f"Action Required - Answer in {timeout}s"
     embed.description = prompt
     for key in fields:
         embed.add_field(name=key, value=fields[key])
     embed.set_footer(text=f"{buttons[0]} to confirm, {buttons[1]} to deny.")
-    dialog = await ctx.reply(embed=embed)
+    if channel:
+        try:
+            dialog = await channel.send(embed=embed)
+        except: # If it can't send to a DM, for instance.
+            dialog = await ctx.send(embed=embed)
+    else:
+        dialog = await ctx.reply(embed=embed)
     for react in buttons:
         await dialog.add_reaction(react)
 
     def _is_valid_reaction(reaction, user) -> bool:
         """Helper check."""
-        return (str(reaction) in buttons and 
-                user == ctx.author and
-                reaction.message == dialog)
+        if target_user:
+            return (str(reaction) in buttons and 
+                    user == target_user and
+                    reaction.message == dialog)
+        else:
+            return (str(reaction) in buttons and 
+                    user == ctx.author and
+                    reaction.message == dialog)
     
     try:
         response, _ = await bot.wait_for('reaction_add', timeout = timeout,

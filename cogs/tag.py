@@ -9,6 +9,8 @@ import asyncpg
 from asyncpg.pool import create_pool
 import discord
 import discord.ext.commands as commands
+import utils.converters as conv
+import utils.utils as util
 
 class Tags(commands.Cog):
     """Holds tags. Inspired by Robo-Danny"""
@@ -16,7 +18,11 @@ class Tags(commands.Cog):
         self.bot = bot
 
     @commands.guild_only()
-    @commands.group(invoke_without_command = True)
+    @commands.group(invoke_without_command = True,
+                    brief="Say whatever!",
+                    help="Entry to the tag system. Without a subcommand, "
+                         "displays a tag in the database.",
+                    usage="<tag>")
     async def tag(self, ctx, *, tagname = None):
         if tagname == None:
             await ctx.send_help(ctx.command)
@@ -38,7 +44,11 @@ class Tags(commands.Cog):
             
 
     @commands.guild_only()
-    @tag.command()
+    @tag.command(brief="Create a tag!",
+                 help="Creates a tag of your choice! To make a multi-word tag "
+                      "name, surround your tag name in quotes. It even works "
+                      "with attachments!",
+                 usage="<tagname> <content>")
     async def create(self, ctx, tagname, *, content = ''):
         if tagname in [cmd.name for cmd in self.walk_commands()]:
             await ctx.send(f"{ctx.author.mention}, the tag name is reserved.")
@@ -49,7 +59,12 @@ class Tags(commands.Cog):
                 await self._create_tag(ctx, tagname.lower(), content)
                 await ctx.message.add_reaction('✍')
 
-    @tag.command()
+    @commands.guild_only()
+    @tag.command(brief="Delete a tag.",
+                 help="Removes a tag or alias from the database. You must "
+                      "either own the object or have manage messages "
+                      "permissions to do so.",
+                 usage="<tagname>")
     async def delete(self, ctx, tagname):
         """Deletes the tag called 'tagname'."""
         tag_tup = await self._find_tag_or_alias(ctx, tagname.lower())
@@ -67,7 +82,11 @@ class Tags(commands.Cog):
         else:
             await ctx.send(f"Hmm, can't find what you're looking for.")
 
-    @tag.command()
+    @commands.guild_only()
+    @tag.command(brief="Creates a tag alias",
+                 help="Create an alias, allowing a tag to be looked up by "
+                      "another name. Use quotes around multi-word tag names.",
+                 usage="<alias name> <tag name>")
     async def alias(self, ctx, aliasname, tagname):
         if tagname in [cmd.name for cmd in self.walk_commands()]:
             nameused = await self._find_tag_or_alias(ctx, aliasname)
@@ -81,6 +100,35 @@ class Tags(commands.Cog):
                 await ctx.send("Name already in use!")
         else:
             await ctx.send("That tag name is reserved.")
+
+    async def transfer(self, ctx, member: conv.I_MemberConverter, tagname):
+        """Transfers a tag to another member."""
+        tag_tup = await self._find_tag_or_alias(ctx, tagname)
+        if not tag_tup:
+            await ctx.send("Couldn't find the tag to transfer.")
+        elif not (tag_tup[1]['owner'] == ctx.author.id):
+            await ctx.send("You don't own that tag!")
+        else:
+            await ctx.send(f"Trying to send the tag {tagname} to {member.display_name}...",
+                           delete_after=15)
+            prompt = (f"{ctx.author.display_name} wants to give you ownership of "
+                      f"the {tag_tup[0]} {tagname} in {ctx.guild.name}. "
+                      "Will you accept?")
+            if (await util.confirm(ctx, 
+                                   target_user=member,
+                                   channel= await member.create_dm(),
+                                   prompt=prompt,
+                                   timeout=120)):
+                if tag_tup[0] == 'tag':
+                    await self._transfer_tag(tag_tup[1], member.id)
+                else:
+                    await self._transfer_alias(tag_tup[1], member.id)
+            else:
+                # Confirmation box returned False
+                await ctx.reply("Transfer failed - either the confirmation "
+                                "was rejected or timed out.",
+                                delete_after=15)
+        
 
 
 
@@ -200,6 +248,24 @@ class Tags(commands.Cog):
         async with self.bot.db.acquire() as conn:
             await conn.execute(
                 """DELETE FROM tagaliases WHERE alias_id = $1""",
+                alias['alias_id']
+            )
+
+    async def _transfer_tag(self, tag, new_owner_id):
+        async with self.bot.db.acquire() as conn:
+            await conn.execute(
+                """UPDATE tags SET owner = $1
+                   WHERE tag_id = $2""",
+                new_owner_id,
+                tag['tag_id']
+            )
+    
+    async def _transfer_alias(self, alias, new_owner_id):
+        async with self.bot.db.acquire() as conn:
+            await conn.execute(
+                """UPDATE tagaliases SET owner = $1
+                   WHERE alias_id = $2""",
+                new_owner_id,
                 alias['alias_id']
             )
 
