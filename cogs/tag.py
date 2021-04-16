@@ -70,7 +70,7 @@ class Tags(commands.Cog):
         tag_tup = await self._find_tag_or_alias(ctx, tagname.lower())
         if not tag_tup:
             await ctx.send(f"Couldn't find that tag.")
-        elif ((tag_tup[1]['owner'] != ctx.author.id) or
+        elif ((tag_tup[1]['owner'] != ctx.author.id) and
               not ctx.author.guild_permissions.manage_messages):
             await ctx.send(f"You can't delete this tag!")
         elif tag_tup[0] == 'tag':
