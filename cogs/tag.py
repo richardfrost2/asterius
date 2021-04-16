@@ -96,6 +96,7 @@ class Tags(commands.Cog):
                     await ctx.send("Couldn't find that tag.")
                 else:
                     await self._create_alias(ctx, aliasname, tag)
+                    await ctx.add_reaction('✍')
             else:
                 await ctx.send("Name already in use!")
         else:
@@ -128,11 +129,45 @@ class Tags(commands.Cog):
                     await self._transfer_tag(tag_tup[1], member.id)
                 else:
                     await self._transfer_alias(tag_tup[1], member.id)
+                await ctx.message.add_reaction('✉')
             else:
                 # Confirmation box returned False
                 await ctx.reply("Transfer failed - either the confirmation "
                                 "was rejected or timed out.",
                                 delete_after=15)
+
+    @tag.command(brief="Get tag information",
+                 help="Get information about a tag, like who owns it, how "
+                      "many times it's been used, or what the alias points "
+                      "to.",
+                 usage="<tagname>")
+    async def info(self, ctx, tagname):
+        """Gets info about a tag."""
+        tag_tup = await self._find_tag_or_alias(ctx, tagname)
+        if not tag_tup:
+            await ctx.send("Couldn't find that tag.")
+        else:
+            embed = util.Embed()
+            owner = ctx.guild.get_member(tag_tup[1]['owner'])
+            if owner:
+                embed.set_author(name=owner.display_name,
+                                 icon_url=owner.avatar_url)
+            else:
+                default_avvie = 'https://cdn.discordapp.com/embed/avatars/0.png'
+                embed.set_author(name="(User not in guild)",
+                                 icon_url=default_avvie)
+            embed.title = tag_tup[1]['name']
+            if tag_tup[0] == 'tag':
+                embed.add_field(name="Tag Owner", value=f"<@{tag_tup[1]['owner']}>")
+                embed.add_field(name="Uses", value=tag_tup[1]['uses'])
+                embed.set_footer(text="Tag created on")
+                embed.timestamp = tag_tup[1]['created_date']
+            else:
+                embed.add_field(name="Alias Owner", value=f"<@{tag_tup[1]['owner']}>")
+                tag = await self._find_tag(ctx, tagname)
+                embed.add_field(name="Referenced tag", value=tag['name'])
+            await ctx.send(embed=embed)
+
         
 
 
