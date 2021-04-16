@@ -18,9 +18,9 @@ class DBHelp(commands.Cog):
     async def refreshdb(self, ctx):
         """Manually updates the db."""
         for guild in self.bot.guilds:
-            await self.on_guild_join(self, guild)
+            await self.on_guild_join(guild)
         for user in self.bot.users:
-            await self.on_member_join(self, user)
+            await self.on_member_join(user)
         await ctx.message.add_reaction('🆗')
 
     @commands.Cog.listener()
