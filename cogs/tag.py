@@ -169,6 +169,11 @@ class Tags(commands.Cog):
                 embed.add_field(name="Referenced tag", value=tag['name'])
             await ctx.send(embed=embed)
 
+    @commands.guild_only()
+    @tag.command(brief="Claim orphaned tags",
+                 help="Take ownership of a tag/alias if its owner isn't in "
+                      "the guild anymore.",
+                 usage="<tagname>")
     async def claim(self, ctx, tagname):
         """Allows a user to take ownership if the owner is not in the guild."""
         tag_tup = await self._find_tag_or_alias(ctx, tagname)
