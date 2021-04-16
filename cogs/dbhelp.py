@@ -25,17 +25,17 @@ class DBHelp(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        if await self._get_user(self, member.id):
+        if await self._get_user(member.id):
             pass
         else:
-            await self._add_user(self, member.id)
+            await self._add_user(member.id)
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         if await self._get_guild(guild.id):
             pass
         else:
-            await self._add_guild(self, guild.id)
+            await self._add_guild(guild.id)
 
     async def _get_user(self, user_id):
         async with self.bot.db.acquire() as conn:
