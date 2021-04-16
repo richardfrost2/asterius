@@ -4,7 +4,10 @@ import discord
 import discord.ext.commands as commands
 
 class DBHelp(commands.Cog):
+    """Holds listeners to keep the bot up to date."""
+
     def __init__(self, bot):
+        """Classic bot setup function."""
         self.bot = bot
 
     @commands.is_owner()
@@ -13,6 +16,7 @@ class DBHelp(commands.Cog):
                       help="Attempts to add all missing users and guilds to the DB.",
                       usage="")
     async def refreshdb(self, ctx):
+        """Manually updates the db."""
         for guild in self.bot.guilds:
             await self.on_guild_join(self, guild)
         for user in self.bot.users:
@@ -62,3 +66,6 @@ class DBHelp(commands.Cog):
                 """INSERT INTO guilds (guild_id) VALUES ($1)""",
                 guild_id
             )
+
+def setup(bot):
+    bot.add_cog(DBHelp(bot))

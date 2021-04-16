@@ -135,6 +135,7 @@ class Tags(commands.Cog):
                 await ctx.reply("Transfer failed - either the confirmation "
                                 "was rejected or timed out.",
                                 delete_after=15)
+                await ctx.message.add_reaction('❌')
 
     @tag.command(brief="Get tag information",
                  help="Get information about a tag, like who owns it, how "
@@ -167,6 +168,22 @@ class Tags(commands.Cog):
                 tag = await self._find_tag(ctx, tagname)
                 embed.add_field(name="Referenced tag", value=tag['name'])
             await ctx.send(embed=embed)
+
+    async def claim(self, ctx, tagname):
+        """Allows a user to take ownership if the owner is not in the guild."""
+        tag_tup = await self._find_tag_or_alias(ctx, tagname)
+        if not tag_tup:
+            await ctx.send("Couldn't find the tag to claim.")
+        else:
+            owner = ctx.guild.get_member(tag_tup[1]['owner'])
+            if owner:
+                await ctx.send("That member is still in the guild!")
+            else:
+                if tag_tup[0] == 'tag':
+                    await self._transfer_tag(tag_tup[1], ctx.author.id)
+                else:
+                    await self._transfer_alias(tag_tup[1], ctx.author.id)
+                await ctx.message.add_reaction('📩')
 
         
 
