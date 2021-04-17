@@ -170,6 +170,23 @@ class Tags(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.guild_only()
+    @tag.command(brief="See the top used tags",
+                 help="Gets the top 10 most used tags in the guild.",
+                 usage="")
+    async def top(self, ctx):
+        """Gets the top used tags for the guild."""
+        tags = self._get_top_tags(ctx)
+        embed = util.Embed()
+        embed.title = f"Top tags in {ctx.guild}"
+        embed.description = '\n'.join(
+            [f"{tag[0]+1} - {tag[1]['name']} - {tag[1]['uses']} uses" 
+            for tag in enumerate(tags)]
+        )
+        await ctx.send(embed=embed)
+
+
+
+    @commands.guild_only()
     @tag.command(brief="Claim orphaned tags",
                  help="Take ownership of a tag/alias if its owner isn't in "
                       "the guild anymore.",
@@ -330,6 +347,17 @@ class Tags(commands.Cog):
                 new_owner_id,
                 alias['alias_id']
             )
+
+    async def _get_top_tags(self, ctx):
+        async with self.bot.db.acquire() as conn:
+            taglist = await conn.fetch(
+                """SELECT * FROM tags
+                   WHERE guild_id = $1
+                   ORDER BY uses DESC
+                   LIMIT 10""",
+                   ctx.guild.id
+            )
+            return taglist
 
 
             
