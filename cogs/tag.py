@@ -175,7 +175,7 @@ class Tags(commands.Cog):
                  usage="")
     async def top(self, ctx):
         """Gets the top used tags for the guild."""
-        tags = self._get_top_tags(ctx)
+        tags = await self._get_top_tags(ctx)
         embed = util.Embed()
         embed.title = f"Top tags in {ctx.guild}"
         embed.description = '\n'.join(
