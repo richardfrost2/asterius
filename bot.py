@@ -166,6 +166,10 @@ async def on_command_error(ctx, exc):
         await ctx.send("This command can only be used in servers.",
                        delete_after=15)
         return
+    if isinstance(exc, commands.MissingPermissions):
+        await ctx.send("You don't have the required permissions to do this.",
+                       delete_after=15)
+        return
     if isinstance(exc, (commands.BadArgument, commands.MissingRequiredArgument,
                         commands.TooManyArguments)):
         await ctx.send("I can't understand the input.\n"
