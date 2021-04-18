@@ -32,6 +32,8 @@ bot = commands.Bot(command_prefix=util.prefix,
                    intents=intents,
                    help_command=utils.help.HelpCommand())
 
+bot.prefixes = {}
+
 for extension in config.EXTENSIONS:
     try:
         bot.load_extension(extension)

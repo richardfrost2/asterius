@@ -175,6 +175,7 @@ class BotManagement(Cog):
                        WHERE guild_id = $2""",
                     new_prefix, guild.id
                 )
+            self.bot.prefixes[guild.id] = new_prefix
 
 def setup(bot: commands.Bot):
     """Adds the cog to the bot when added."""

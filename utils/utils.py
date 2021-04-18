@@ -83,6 +83,8 @@ async def prefix(bot, msg):
     """Returns the prefix for the bot."""
     if msg.guild is None:
         prefix_val = '$'
+    elif msg.guild.id in bot.prefixes:
+        return commands.when_mentioned_or(bot.prefixes[msg.guild.id])(bot, msg)
     else:
         async with bot.db.acquire() as conn:
             prefix_val = await conn.fetchval(
@@ -90,6 +92,7 @@ async def prefix(bot, msg):
                 WHERE guild_id = $1""",
                 msg.guild.id
             )
+            bot.prefixes[msg.guild.id] = prefix_val
             if not prefix_val:
                 return commands.when_mentioned(bot, msg)
     return commands.when_mentioned_or(prefix_val)(bot, msg)
