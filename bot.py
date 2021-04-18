@@ -26,7 +26,7 @@ activity = discord.Activity(type=config.ACTIVITY_TYPE,
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix=when_mentioned_or('$'),
+bot = commands.Bot(command_prefix=util.prefix,
                    owner_id=config.OWNER,
                    activity=activity,
                    intents=intents,

@@ -30,6 +30,9 @@ class Moderation(commands.Cog):
         # ^ member.joined_at can be None but this is so uncommon I'm ignoring.
         embed.add_field(name="Account Created",
                         value=member.created_at.strftime(TIME_FORMAT))
+        if member.bot:
+            embed.add_field(name="Bot Invite Link",
+                            value=f"[Invite Bot]({discord.utils.oauth_url(member.id)})")
         await ctx.send(embed=embed)
         
 

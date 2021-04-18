@@ -19,6 +19,9 @@ class BotManagement(Cog):
     Use with caution.
     """
 
+    def __init__(self, bot):
+        self.bot = bot
+
     @commands.command(aliases=["repo","code"],
                       brief="All about me",
                       help="Gives some information about me, like my" +
@@ -72,9 +75,42 @@ class BotManagement(Cog):
                             "Don't tell others how to get in, let them find " +
                             f"out for themselves! :)\n{invite}")
 
-    @commands.command(hidden=True)
-    async def prefix(self, ctx):
-        await ctx.send(f"{ctx.author.display_name}, my prefix is `$`.")
+    @commands.group(invoke_without_command = True,
+                    brief="Get the prefix.",
+                    help="Use this command to get the prefix where you are. "
+                         "If you can manage messages, you can use 'clear' "
+                         "and 'set' subcommands to change it in your guild.")
+    async def prefix(self, ctx, new_prefix = None):
+        prefix_val = await self._get_guild_prefix(ctx.guild)
+        if prefix_val:
+            await ctx.send(f"{ctx.author.display_name},"
+                            f" my prefix is `{prefix_val}`.\n"
+                            "Of course, you can mention me, too.")
+        else:
+            await ctx.send(f"{ctx.author.display_name}, "
+                           "I currently only listen to my mention here.")
+
+    @commands.has_guild_permissions(manage_messages=True)
+    @prefix.command(brief="Clear the prefix.",
+                    help="Make this bot only respond to commands when mentioned.")
+    async def clear(self, ctx):
+        """Clears a guild prefix."""
+        await self._set_guild_prefix(ctx.guild, None)
+        await ctx.send("Prefix cleared. "
+                       "Please mention me if you want to use commands!")
+
+    @commands.has_guild_permissions(manage_messages=True)
+    @prefix.command(brief="Set the bot's prefix.",
+                    help="Sets the prefix in your guild. Any string can be "
+                         "used, but the maximum length is 10 characters.")
+    async def set(self, ctx, new_prefix):
+        """Sets a guild prefix."""
+        if len(new_prefix) <= 10:
+            await self._set_guild_prefix(ctx.guild, new_prefix)
+            await ctx.message.add_reaction('👌')
+        else:
+            await ctx.send(f"{ctx.author.display_name},"
+                            " that prefix is too long! (max 10 chars)")
 
 
     @commands.is_owner()
@@ -117,49 +153,29 @@ class BotManagement(Cog):
         await ctx.bot.change_presence(activity=activity)
         await ctx.message.add_reaction("🆗")
 
-    @commands.is_owner()
-    @commands.command(hidden=True,
-                      usage="<expression>",
-                      enabled=False)
-    async def sudo(self, ctx, *, expr = ""):
-        """Depricated. Use jishaku instead."""
-        if (ctx.author.id == ctx.bot.owner_id or ctx.author.id in ctx.bot.owner_ids):
-            # Keep peeps accountable.
-            print(f"PROCESSING: {ctx.author.name} executed {expr}")
-            try:
-                await ctx.send(str(eval(expr)))  # pylint: disable=eval-used
-            except Exception as exc:
-                await ctx.send(f"```EXCEPTION:\n{exc}```")
+    async def _get_guild_prefix(self, guild):
+        if guild is None:
+            prefix_val = '$'
         else:
-            await ctx.send(f"`'{ctx.author.name}'' isn't in the sudoers file. " +
-                           "This incident will be reported.`")
-    
-    @commands.is_owner()
-    @commands.command(hidden=True,
-                      enabled=False)
-    async def sudoexec(self, ctx, *, expr = ""):
-        """Depricated. Use jishaku instead."""
-        if (ctx.author.id == ctx.bot.owner_id or ctx.author.id in ctx.bot.owner_ids):
-            # Keep peeps accountable.
-            print(f"PROCESSING: {ctx.author.name} executed {expr}")
-            try:
-                await exec(expr)  # pylint: disable=exec-used
-                await ctx.message.add_reaction("🆗")
-            except Exception as exc:
-                await ctx.send(f"```EXCEPTION:\n{exc}```")
-        else:
-            await ctx.send(f"`'{ctx.author.name}'' isn't in the sudoers file. " +
-                           "This incident will be reported.`")
+            async with self.bot.db.acquire() as conn:
+                prefix_val = await conn.fetchval(
+                    """SELECT prefix FROM guilds
+                    WHERE guild_id = $1""",
+                    guild.id
+                )
+        return prefix_val
 
-    # @sudo.error
-    # @sudoexec.error
-    # async def sudo_error(ctx, error):
-    #     try:
-    #         raise error()
-    #     except commands.NotOwner:
-    #         await ctx.send(f"`'{ctx.author.display_name}' isn't in the " +
-    #                         "sudoers file. This incident will be reported.`")
+    async def _set_guild_prefix(self, guild, new_prefix):
+        if not guild:
+            raise ValueError("Tried to set an empty guild.")
+        else:
+            async with self.bot.db.acquire() as conn:
+                await conn.execute(
+                    """UPDATE guilds SET prefix = $1
+                       WHERE guild_id = $2""",
+                    new_prefix, guild.id
+                )
 
 def setup(bot: commands.Bot):
     """Adds the cog to the bot when added."""
-    bot.add_cog(BotManagement())
+    bot.add_cog(BotManagement(bot))

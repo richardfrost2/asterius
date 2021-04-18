@@ -159,6 +159,7 @@ class Tags(commands.Cog):
                                  icon_url=default_avvie)
             embed.title = tag_tup[1]['name']
             if tag_tup[0] == 'tag':
+                embed.add_field(name="Tag ID", value=tag_tup[1]['tag_id'])
                 embed.add_field(name="Tag Owner", value=f"<@{tag_tup[1]['owner']}>")
                 embed.add_field(name="Uses", value=tag_tup[1]['uses'])
                 embed.set_footer(text="Tag created on")
@@ -179,7 +180,7 @@ class Tags(commands.Cog):
         embed = util.Embed()
         embed.title = f"Top tags in {ctx.guild}"
         embed.description = '\n'.join(
-            [f"{tag[0]+1} - {tag[1]['name']} - {tag[1]['uses']} uses" 
+            [f"{tag[0]+1} - {tag[1]['name']} (id: {tag[1]['tag_id']}) - {tag[1]['uses']} uses" 
             for tag in enumerate(tags)]
         )
         await ctx.send(embed=embed)
@@ -207,7 +208,42 @@ class Tags(commands.Cog):
                     await self._transfer_alias(tag_tup[1], ctx.author.id)
                 await ctx.message.add_reaction('📩')
 
-        
+    @commands.guild_only()
+    @tag.command(brief="Get tag by ID",
+                 help="Gets a tag by the tag ID.",
+                 usage="<tag id>")
+    async def id(self, ctx, tag_id: int):
+        tag = await self._find_tag_by_id(ctx, tag_id)
+        if tag:
+            tagfiles = await self._get_attachments(tag['tag_id'])
+            attachments = []
+            for file in tagfiles:
+                tempfile = io.BytesIO()
+                tempfile.write(file['contents'])
+                tempfile.seek(0)
+                attachment = discord.File(tempfile, file['file_name'])
+                attachments.append(attachment)
+            await ctx.send(tag['message'], files=attachments)
+            await self._increment_uses(tag)
+        else:
+            await ctx.send(f"Couldn't find that tag.")
+
+    @commands.guild_only()
+    @tag.command(brief="Delete tag by ID",
+                 help="Deletes a tag by ID. You must own the tag or have "
+                      "manage message permissions to do so.",
+                 usage="<tag id>")
+    async def delete_id(self, ctx, tag_id: int):
+        tag = self._find_tag_by_id(ctx, tag_id)
+        if tag:
+            if ((tag['owner'] == ctx.author.id) or
+               ctx.author.guild_permissions.manage_messages):
+               await self._delete_tag(tag)
+               await ctx.message.add_reaction('🗑')
+            else:
+                await ctx.send("You don't have permission to delete this tag.")
+        else:
+            await ctx.send("Can't find that tag.")
 
 
 
@@ -265,6 +301,17 @@ class Tags(commands.Cog):
                     return None
                 return ('alias', alias)
             return ('tag', tag)
+
+    async def _find_tag_by_id(self, ctx, tag_id):
+        """Gets a tag with the given id in the guild."""
+        async with self.bot.db.acquire() as conn:
+            tag = await conn.fetch(
+                """SELECT * FROM tags
+                   WHERE tag_id = $1 and guild_id = $2""",
+                tag_id,
+                ctx.guild.id
+            )
+            return tag
 
     async def _get_attachments(self, tag_id: int) -> list:
         """Gets attachments belonging to a tag."""

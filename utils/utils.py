@@ -78,3 +78,18 @@ async def confirm(ctx: commands.Context, *,
         await dialog.delete()
         return False
     
+
+async def prefix(bot, msg):
+    """Returns the prefix for the bot."""
+    if msg.guild is None:
+        prefix_val = '$'
+    else:
+        async with bot.db.acquire() as conn:
+            prefix_val = await conn.fetchval(
+                """SELECT prefix FROM guilds
+                WHERE guild_id = $1""",
+                msg.guild.id
+            )
+            if not prefix_val:
+                return commands.when_mentioned(bot, msg)
+    return commands.when_mentioned_or(prefix_val)(bot, msg)
