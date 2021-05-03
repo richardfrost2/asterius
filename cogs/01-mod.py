@@ -32,7 +32,8 @@ class Moderation(commands.Cog):
                         value=member.created_at.strftime(TIME_FORMAT))
         if member.bot:
             embed.add_field(name="Bot Invite Link",
-                            value=f"[Invite Bot]({discord.utils.oauth_url(member.id)})")
+                            value="[Invite Bot](" # more below
+        f"{discord.utils.oauth_url(member.id, scopes=('bot', 'applications.commands'))})")
         await ctx.send(embed=embed)
         
 

@@ -37,7 +37,7 @@ class Tags(commands.Cog):
                     tempfile.seek(0)
                     attachment = discord.File(tempfile, file['file_name'])
                     attachments.append(attachment)
-                await ctx.send(tag['message'], files=attachments)
+                await ctx.send(discord.utils.escape_mentions(tag['message']), files=attachments)
                 await self._increment_uses(tag)
             else:
                 await ctx.send(f"Couldn't find that tag.")

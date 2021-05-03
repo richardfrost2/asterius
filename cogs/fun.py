@@ -24,10 +24,6 @@ class Fun(Cog):
                     "multiple options! `a | b ...`",
                      delete_after=20)
 
-
-
-
-
     @commands.command(brief="Show custom emoji",
                       help="Shows a bigger version of a custom emoji. Useful for stealing.",
                       usage="<custom emoji>",
@@ -50,13 +46,10 @@ class Fun(Cog):
         embed = util.Embed()
         embed.set_image(url=str(emoji.url))
         embed.title = emoji.name
-        if emoji.id:
-            embed.set_footer(text=f"ID: {emoji.id} - created")
-            embed.timestamp = emoji.created_at
-        else:
-            embed.set_footer(text="Default Emoji")
+        embed.set_footer(text=f"ID: {emoji.id} - created")
+        embed.timestamp = emoji.created_at
         await ctx.send(embed=embed)
-            
+    
     @commands.is_owner()
     @commands.command(brief="Repeat after me",
                       help="The bot will repeat whatever you say.")

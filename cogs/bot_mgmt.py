@@ -52,6 +52,16 @@ class BotManagement(Cog):
                         inline=False)
         await ctx.send(embed=embed)
 
+    @commands.is_owner
+    @commands.command(brief="Clean up!",
+                      help="Delete a message I sent. Reply and I do the rest.")
+    async def delete(self, ctx):
+        if ctx.message.reference and ctx.message.reference.resolved:
+            msg = ctx.message.reference.resolved
+            if msg.author == ctx.me:
+                await msg.delete()
+                await ctx.message.add_reaction('🗑')
+
     @commands.command(hidden=True,
                       brief="Dive in",
                       help="Gives an invite to the bot testing server.\n" +
