@@ -48,7 +48,7 @@ class Fun(Cog):
                       usage="<custom emoji>")
     async def emoji(self, ctx, emoji: discord.PartialEmoji):
         embed = util.Embed()
-        embed.set_image(emoji.url)
+        embed.set_image(str(emoji.url))
         embed.title = emoji.name
         if emoji.id:
             embed.set_footer(text=f"ID: {emoji.id} - created")
