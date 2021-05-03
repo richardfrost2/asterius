@@ -52,7 +52,7 @@ class BotManagement(Cog):
                         inline=False)
         await ctx.send(embed=embed)
 
-    @commands.is_owner
+    @commands.is_owner()
     @commands.command(brief="Clean up!",
                       help="Delete a message I sent. Reply and I do the rest.")
     async def delete(self, ctx):
