@@ -56,6 +56,7 @@ class Tags(commands.Cog):
             if await self._find_tag(ctx, tagname.lower()):
                 await ctx.send(f"{ctx.author.mention}, the tag is already in use!")
             else:
+                content = discord.utils.escape_mentions(content)
                 await self._create_tag(ctx, tagname.lower(), content)
                 await ctx.message.add_reaction('✍')
 
