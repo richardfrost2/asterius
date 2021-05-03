@@ -55,6 +55,7 @@ class Fun(Cog):
             embed.timestamp = emoji.created_at
         else:
             embed.set_footer(text="Default Emoji")
+        await ctx.send(embed=embed)
             
     @commands.is_owner()
     @commands.command(brief="Repeat after me",
