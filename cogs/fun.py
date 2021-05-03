@@ -5,6 +5,7 @@ import re
 import discord
 import discord.ext.commands as commands
 from discord.ext.commands import Cog
+import utils.utils as util
 
 class Fun(Cog):
 
@@ -29,8 +30,9 @@ class Fun(Cog):
 
     @commands.command(brief="Show custom emoji",
                       help="Shows a bigger version of a custom emoji. Useful for stealing.",
-                      usage="<custom emoji>")
-    async def emoji(self, ctx, emoji):
+                      usage="<custom emoji>",
+                      hidden=True)
+    async def emoji_old(self, ctx, emoji):
         matchinfo = re.match(r'<(a?):(\w+):(\d+)>', emoji, flags=re.I)
         if matchinfo:
             matchinfogroups = matchinfo.groups()
@@ -39,6 +41,20 @@ class Fun(Cog):
         else:
             await ctx.send(f"{ctx.author.mention}, you need to select a valid " + 
                         "emoji.\n(Only custom emojis are accepted.)")
+
+    @commands.command(brief="Show emoji information",
+                      help="Shows information about an emoji, as well as a"
+                           "larger image.",
+                      usage="<custom emoji>")
+    async def emoji(self, ctx, emoji: discord.PartialEmoji):
+        embed = util.Embed()
+        embed.set_image(emoji.url)
+        embed.title = emoji.name
+        if emoji.id:
+            embed.set_footer(text=f"ID: {emoji.id} - created")
+            embed.timestamp = emoji.created_at
+        else:
+            embed.set_footer(text="Default Emoji")
             
     @commands.is_owner()
     @commands.command(brief="Repeat after me",
