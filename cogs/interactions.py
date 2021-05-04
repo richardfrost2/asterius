@@ -47,7 +47,7 @@ class Interactions(Cog):
         elif isinstance(error, (discord.HTTPException, discord.errors.Forbidden)):
             await ctx.send(f"{ctx.author.mention}, I couldn't send it to them. Maybe I'm blocked?")
         elif isinstance(error, commands.errors.MissingRequiredArgument):
-            await self.hug(ctx, ctx.author)
+            await self.hug(ctx, target=ctx.author)
         else:
             await ctx.send("something unusual happened o_O",
                            delete_after=10)
