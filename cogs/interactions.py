@@ -46,7 +46,7 @@ class Interactions(Cog):
     async def hug_error(self, ctx, error):
         if isinstance(error, commands.errors.MemberNotFound):
             await ctx.send(f"{ctx.author.mention}, I couldn't find them.")
-        elif isinstance(error, (discord.errors.HTTPException, discord.errors.Forbidden)):
+        elif isinstance(error, (discord.HTTPException, discord.errors.Forbidden)):
             await ctx.send(f"{ctx.author.mention}, I couldn't send it to them. Maybe I'm blocked?")
         elif isinstance(error, commands.errors.MissingRequiredArgument):
             await self.hug(ctx, ctx.author)
