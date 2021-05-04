@@ -15,7 +15,7 @@ class Interactions(Cog):
                       help="Give someone a hug! The recipient will receive a" +
                            " DM letting you know how much you care with a GIF.",
                       usage="[target]")
-    async def hug(self, ctx: commands.Context, target: converters.I_MemberConverter):
+    async def hug(self, ctx: commands.Context, *, target: converters.I_MemberConverter):
         # Can't send a message to yourself. Acknowledge anyway.
         if target == ctx.bot.user:
             await ctx.message.add_reaction("💖")
