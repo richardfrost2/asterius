@@ -10,6 +10,8 @@ from discord.ext.commands import Cog
 
 class Interactions(Cog):
     """Holds interactions between people."""
+    def __init__(self, bot):
+        self.bot = bot
 
     @commands.command(brief="Give some affection",
                       help="Give someone a hug! The recipient will receive a" +
@@ -51,6 +53,7 @@ class Interactions(Cog):
         else:
             await ctx.send("something unusual happened o_O",
                            delete_after=10)
+            raise error
 
 def setup(bot):
-    bot.add_cog(Interactions())
+    bot.add_cog(Interactions(bot))
