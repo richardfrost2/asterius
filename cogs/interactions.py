@@ -28,7 +28,7 @@ class Interactions(Cog):
         if target == ctx.bot.user:
             await ctx.message.add_reaction("💖")
             return
-        if not self._get_status(target):
+        if not await self._get_status(target):
             await ctx.send("That person doesn't want to be hugged.",
                            delete_after=15)
             return
@@ -80,7 +80,7 @@ class Interactions(Cog):
             await self._change_status(ctx.author, toggle_state)
             status_txt = "will" if toggle_state else "will not"
             await ctx.send(f"Success! {ctx.author.mention}, you now"
-                           f"**{status_txt}** receive interactions.")
+                           f" **{status_txt}** receive interactions.")
 
     # DB Commands below
     async def _get_status(self, user):
