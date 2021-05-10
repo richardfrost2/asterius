@@ -108,9 +108,10 @@ class Anonymous(commands.Cog):
         """If a message is posted in the anonymous submissions channel,
         it will be automatically posted."""
         if message.channel == self.anon_submissions:
-            await self.send_anonymous_msg(message)
-            await message.delete()
-            await message.channel.send("Message sent!", delete_after=10)
+            if message.author != self.bot.user:
+                await self.send_anonymous_msg(message)
+                await message.delete()
+                await message.channel.send("Message sent!", delete_after=10)
 
 def counter():
     """Generates ID numbers for posts. Starts at 10000 and continues."""
