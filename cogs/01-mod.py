@@ -42,10 +42,10 @@ class Moderation(commands.Cog):
         else:
             await ctx.message.add_reaction('❌')
 
-    @commands.Cog.listener(name="on_message")
-    async def begone(message):
-        if message.content.lower().startswith('begone'):
-            pass
+    # @commands.Cog.listener(name="on_message")
+    # async def begone(message):
+    #     if message.content.lower().startswith('begone'):
+    #         pass
 
     @commands.command(usage="[member]")
     async def info(self, ctx, *, member: converters.I_MemberConverter = None):

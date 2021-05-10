@@ -19,6 +19,8 @@ class Messages(Cog):
     @Cog.listener()
     async def on_message(self, message: discord.Message):
         """Message preview"""
+        if message.author == self.bot.user:
+            return
         MESSAGE_RE = "https:\/\/discord(?:app)?.com\/channels\/(\d+|@me)\/(\d+)\/(\d+)"
         match = re.search(MESSAGE_RE, message.clean_content)
         if match:

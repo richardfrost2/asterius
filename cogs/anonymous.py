@@ -91,12 +91,12 @@ class Anonymous(commands.Cog):
         the reaction will be removed for anonymity.
         """
         if reaction.message.channel == self.anon_channel:
-            if str(reaction) == '🗑':
+            if str(reaction) == '🗑️':
                 match = re.match('`#(\d+)`', reaction.message.content)
                 if not match:
                     await reaction.remove(user)
                     return
-                msg_id = int(match.groups[0])
+                msg_id = int(match.groups()[0])
                 if msg_id in self.authors:
                     if self.authors[msg_id] == user:
                         await reaction.message.delete()
