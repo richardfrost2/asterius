@@ -67,7 +67,7 @@ class Anonymous(commands.Cog):
         id_str = f"`#{id_num}`\n"
         msg = await self.anon_channel.send(id_str+message.content, files=attachments)
         await self.anon_log.send(f"#{id_num} sent by {message.author}")
-        await self.process_anon_mentions(self, msg)
+        await self.process_anon_mentions(msg)
         self.authors[id_num] = message.author
 
     async def process_anon_mentions(self, anon_msg):
