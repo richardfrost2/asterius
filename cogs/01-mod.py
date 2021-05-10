@@ -10,6 +10,43 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(brief="For great justice.",
+                      help="Bans someone from your server.",
+                      usage="<member>")
+    @commands.bot_has_guild_permissions(ban_members=True)
+    @commands.has_guild_permissions(ban_members=True)
+    async def ban(self, ctx, member: converters.I_MemberConverter, *, reason):
+        if member == ctx.author:
+            await ctx.send(f"{ctx.author.mention}, you can't ban yourself.")
+            return
+        if member.top_role >= ctx.author.top_role:
+            await ctx.send(f"{ctx.author.mention}, you cannot ban {member.mention},"
+                           f" you don't have permission! (they have the high role)")
+            return
+        if member == ctx.me:
+            await ctx.send("Nah. (Use Server Settings > Integrations to remove me)")
+            return
+        if await util.confirm(ctx,
+                              prompt=f"Are you sure you want to ban {member}?"
+                                     "(This will delete one day of their messages.)",
+                              fields={"Created":member.created_at, "Joined":member.joined_at},
+                              timeout=30):
+            try:
+                await member.send(f"You have been banned from {ctx.guild} by"
+                                  f"{ctx.author.display_name}\n"
+                                  f"Reason: {reason}")
+            except:
+                pass
+            await ctx.guild.ban(member, reason)
+            await ctx.message.add_reaction('🔨')
+        else:
+            await ctx.message.add_reaction('❌')
+
+    @commands.Cog.listener(name="on_message")
+    async def begone(message):
+        if message.content.lower().startswith('begone'):
+            pass
+
     @commands.command(usage="[member]")
     async def info(self, ctx, *, member: converters.I_MemberConverter = None):
         """Get information on a member."""
