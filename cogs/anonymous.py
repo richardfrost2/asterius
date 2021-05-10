@@ -38,7 +38,7 @@ class Anonymous(commands.Cog):
                            "will walk you through the rest.",
                       usage="",
                       description="Thanks LegitName for the idea!")
-    async def anonymous(self, ctx, *, anything):
+    async def anonymous(self, ctx, *, anything = ""):
         """Sends an anonymous message via a maker."""
         if anything:
             await ctx.send("Just use {ctx.prefix}anonymous to start.")
