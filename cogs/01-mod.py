@@ -37,15 +37,24 @@ class Moderation(commands.Cog):
                                   f"Reason: {reason}")
             except:
                 pass
-            await ctx.guild.ban(member, reason)
+            await ctx.guild.ban(member, str(ctx.author) + reason)
             await ctx.message.add_reaction('🔨')
         else:
             await ctx.message.add_reaction('❌')
 
-    # @commands.Cog.listener(name="on_message")
-    # async def begone(message):
-    #     if message.content.lower().startswith('begone'):
-    #         pass
+    @commands.Cog.listener(name="on_message")
+    async def begone(self, message):
+        """Allows shouting BEGONE at people in your server for a more flashy
+        ban command.
+        """
+        if message.content.lower().startswith('begone'):
+            perms = message.author.permissions_in(message.channel)
+            if perms.ban_members:
+                if message.reference and message.reference.resolved:
+                    ctx = await self.bot.get_context(message)
+                    await self.ban(ctx, message.reference.resolved.author,
+                                   reason = message.clean_content)
+
 
     @commands.command(usage="[member]")
     async def info(self, ctx, *, member: converters.I_MemberConverter = None):

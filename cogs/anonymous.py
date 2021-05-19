@@ -20,6 +20,7 @@ class Anonymous(commands.Cog):
     """
 
     def __init__(self, bot):
+        """Initialize bot variables."""
         self.bot = bot
         self.authors = {}  # Becomes {msg_id : author (Member/User)}
         self.counter = counter()
@@ -41,17 +42,17 @@ class Anonymous(commands.Cog):
     async def anonymous(self, ctx, *, anything = ""):
         """Sends an anonymous message via a maker."""
         if anything:
-            await ctx.send("Just use {ctx.prefix}anonymous to start.")
+            await ctx.send(f"Just use {ctx.prefix}anonymous to start.")
         else:
             prompt = await ctx.send("Ready! Please send your message you want to anonymize.")
 
             def check(message):
                 return (message.channel == ctx.channel and
                         message.author == ctx.author)
-            
+
             msg = await self.bot.wait_for('message', check=check)
             await self.send_anonymous_msg(msg)
-            
+
             try:
                 await prompt.delete()
                 await msg.delete()
@@ -73,7 +74,7 @@ class Anonymous(commands.Cog):
     async def process_anon_mentions(self, anon_msg):
         """Notifies authors of mentioned posts."""
         mentioned_ints = []
-        matches = re.findall('>>(\d+)', anon_msg.content)
+        matches = re.findall(r'>>(\d+)', anon_msg.content)
         # Returns `str`s so make them ints instead.
         matches = [int(num) for num in matches]
         for message in matches:  # message is an int
@@ -87,12 +88,12 @@ class Anonymous(commands.Cog):
     @commands.Cog.listener(name="on_reaction_add")
     async def delete_message(self, reaction, user):
         """If someone sends the trashcan emoji to their own message, it will
-        be deleted. Else (trashcan but not author), 
+        be deleted. Else (trashcan but not author),
         the reaction will be removed for anonymity.
         """
         if reaction.message.channel == self.anon_channel:
             if str(reaction) == '🗑️':
-                match = re.match('`#(\d+)`', reaction.message.content)
+                match = re.match(r'`#(\d+)`', reaction.message.content)
                 if not match:
                     await reaction.remove(user)
                     return
