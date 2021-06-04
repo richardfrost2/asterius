@@ -123,7 +123,7 @@ class Tags(commands.Cog):
                       "Will you accept?")
             if (await util.confirm(ctx, 
                                    target_user=member,
-                                   channel= await member.create_dm(),
+                                   channel=member,
                                    prompt=prompt,
                                    timeout=120)):
                 if tag_tup[0] == 'tag':
