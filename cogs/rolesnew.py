@@ -153,7 +153,7 @@ class Roles(commands.Cog):
         """Gets records from one guild.
         Like ROLES_TO_COLORS was in the last iteration.
         """
-        with self.bot.db.acquire() as conn:
+        async with self.bot.db.acquire() as conn:
             roles = await conn.fetch(
                 """SELECT * FROM colorroles WHERE guild_id = $1""",
                 guild.id
@@ -176,7 +176,7 @@ class Roles(commands.Cog):
         Like ALL_COLOR_ROLES in the last iteration.
         Returns a list of IDs.
         """
-        with self.bot.db.acquire() as conn:
+        async with self.bot.db.acquire() as conn:
             roles = await conn.fetch(
                 """SELECT color_role FROM colorroles WHERE guild_id = $1""",
                 guild.id
@@ -185,7 +185,7 @@ class Roles(commands.Cog):
 
     async def _add_role(self, guild, key_role_id, color_role_id):
         """Adds a role to the DB."""
-        with self.bot.db.acquire() as conn:
+        async with self.bot.db.acquire() as conn:
             await conn.execute(
                 """INSERT INTO colorroles (guild_id, key_role, color_role)
                 VALUES ($1, $2, $3)
@@ -195,7 +195,7 @@ class Roles(commands.Cog):
 
     async def _delete_role(self, key_role_id):
         """Removes a color role from the DB."""
-        with self.bot.db.acquire() as conn:
+        async with self.bot.db.acquire() as conn:
             await conn.execute(
                 """DELETE FROM colorroles WHERE key_role = $1""",
                 key_role_id
