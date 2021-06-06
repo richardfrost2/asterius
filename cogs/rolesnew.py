@@ -201,3 +201,5 @@ class Roles(commands.Cog):
                 key_role_id
             )
     
+def setup(bot):
+    bot.add_cog(Roles(bot))
