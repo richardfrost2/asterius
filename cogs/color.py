@@ -24,7 +24,7 @@ class ColorChange(commands.Cog):
             # Prepare the embed.
             embed = discord.Embed(colour=discord.Color.random())
             embed.title = "Equipable Color Inventory"
-            embed.description = ("Equip a color by using `!color <number>`. " +
+            embed.description = ("Equip a color by using `!color <number>`.\n" +
                 "For example, to equip `COLOR 0` use `!color 0`.\n\n" +
                 "\n".join([role.mention for role in roles]))
             await ctx.send(embed=embed)
@@ -33,10 +33,11 @@ class ColorChange(commands.Cog):
                 await ctx.author.remove_roles(roles,
                                               reason="Color change",
                                               atomic=True) # subject to change
+                await ctx.message.add_reaction('👌')
             else:
                 applied_role = discord.utils.get(roles, name="COLOR " + number)
                 if applied_role:
-                    await ctx.author.remove_roles(roles,
+                    await ctx.author.remove_roles(*roles,
                                                   reason="Color change",
                                                   atomic=True) # subject to change
                     await ctx.author.add_roles(applied_role,
