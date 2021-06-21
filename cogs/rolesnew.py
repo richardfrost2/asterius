@@ -94,7 +94,7 @@ class Roles(commands.Cog):
                       help="Removes any colors you have equipped. Only " +
                            "available in the test server.")
     async def unequip(self, ctx):
-        color_roles = self._get_guild_color_roles(ctx.guild)
+        color_roles = await self._get_guild_color_roles(ctx.guild)
         await ctx.author.remove_roles(*[discord.Object(i) for i in color_roles])
         await ctx.message.add_reaction("👌")
 
