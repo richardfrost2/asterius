@@ -68,14 +68,14 @@ class Moderation(commands.Cog):
         else:
             embed.set_author(name = str(member), icon_url = member.avatar_url)
         embed.description = "(" + member.mention + ")"
-        TIME_FORMAT = r"%a, %d %b %Y %X UTC"
         # Example: "Sun, 28 Mar 2021 18:54:22 UTC"
         embed.add_field(name="ID", value = member.id)
         embed.add_field(name="Joined",
-                        value=member.joined_at.strftime(TIME_FORMAT))
+                        value=util.timestamp(member.joined_at))
         # ^ member.joined_at can be None but this is so uncommon I'm ignoring.
+        #   if it causes problems I'll add an exception.
         embed.add_field(name="Account Created",
-                        value=member.created_at.strftime(TIME_FORMAT))
+                        value=util.timestamp(member.created_at))
         if member.bot:
             embed.add_field(name="Bot Invite Link",
                             value="[Invite Bot](" # more below

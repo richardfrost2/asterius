@@ -1,6 +1,6 @@
 
 import asyncio
-import datetime
+from datetime import datetime
 import config
 import discord
 from discord.ext import commands
@@ -96,3 +96,15 @@ async def prefix(bot, msg):
             if not prefix_val:
                 return commands.when_mentioned(bot, msg)
     return commands.when_mentioned_or(prefix_val)(bot, msg)
+
+def timestamp(time: datetime = datetime.now(), suffix = None) -> str:
+    """Turns a datetime object into a timestamp string.
+    Suffix is a string containing the format Discord should render it in.
+    Check the Discord API documentation for more details.
+    """
+    # d.py might add something for this soon. Until then, use this.
+    epoch_time = int(time.timestamp())
+    if suffix:
+        return f"<t:{epoch_time}:{suffix}>"
+    else:
+        return F"<t:{epoch_time}>"
