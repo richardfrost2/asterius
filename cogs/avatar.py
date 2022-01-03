@@ -234,13 +234,14 @@ class Avatar(Cog):
     @commands.command(brief = "KEYGEN",
         help="Makes a picture, like your avatar, rainbow shifting, just"
             "like your favorite [Big Shot]!\nAs usual, GIF inputs are not"
-            "supported.\nDefault image is your avatar.",
+            "supported.\nDefault image is your avatar. Expect transparency to be lost.",
         usage = "[@user|url|attachment]",
         description="Colorshift code by unutbu"
         )
     async def keygen(self, ctx, *, msg=""):
         """Makes it rainbowy! Likely the last command before Asterius 2.0"""
-        with ctx.typing():
+        async with ctx.typing():
+            await ctx.send("Takes a second, please be patient...", delete_after=15)
             url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
             # This could really be good in a seperate function but I may have to
             # rewrite this in the future anyway :P
