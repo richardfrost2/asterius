@@ -1,4 +1,5 @@
 
+import functools
 import io
 import random
 import re
@@ -10,9 +11,9 @@ import utils.utils as util
 from discord.ext import commands
 from discord.ext.commands import Cog
 from PIL import Image, ImageEnhance, ImageFilter
+from utils import keygen
 from utils.colorize import set_hue
 from utils.colorme import shift_hue
-from utils import keygen
 
 
 class Avatar(Cog):
@@ -265,8 +266,9 @@ class Avatar(Cog):
             except:
                 await ctx.send("I can't open that file! I need an image.")
                 return
-            # Make it rainbowy!
-            keygenned_image = keygen.keygen(img)
+            # Make it rainbowy! With executor.
+            partial = functools.partial(keygen.keygen, img)
+            keygenned_image = await ctx.bot.loop.run_in_executor(None, partial)
             keygenned_file = discord.File(keygenned_image, filename="keygen.gif")
             # and send.
             await ctx.send("KEYGEN", file=keygenned_file)
