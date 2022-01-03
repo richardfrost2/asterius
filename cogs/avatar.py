@@ -240,8 +240,8 @@ class Avatar(Cog):
         )
     async def keygen(self, ctx, *, msg=""):
         """Makes it rainbowy! Likely the last command before Asterius 2.0"""
+        await ctx.send("Takes a second, please be patient...", delete_after=15)
         async with ctx.typing():
-            await ctx.send("Takes a second, please be patient...", delete_after=15)
             url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
             # This could really be good in a seperate function but I may have to
             # rewrite this in the future anyway :P
