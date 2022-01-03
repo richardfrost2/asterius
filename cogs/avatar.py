@@ -233,8 +233,8 @@ class Avatar(Cog):
         await ctx.send(embed=embed, file=file)
 
     @commands.command(brief = "KEYGEN",
-        help="Makes a picture, like your avatar, rainbow shifting, just"
-            "like your favorite [Big Shot]!\nAs usual, GIF inputs are not"
+        help="Makes a picture, like your avatar, rainbow shifting, just "
+            "like your favorite [Big Shot]!\nAs usual, GIF inputs are not "
             "supported.\nDefault image is your avatar. Expect transparency to be lost.",
         usage = "[@user|url|attachment]",
         description="Colorshift code by unutbu"
