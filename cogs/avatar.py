@@ -12,6 +12,7 @@ from discord.ext.commands import Cog
 from PIL import Image, ImageEnhance, ImageFilter
 from utils.colorize import set_hue
 from utils.colorme import shift_hue
+from utils import keygen
 
 
 class Avatar(Cog):
@@ -229,6 +230,46 @@ class Avatar(Cog):
         embed.set_image(url="attachment://colorme.png")
         embed.set_footer(text=f"Spin Value: {color_rot}")
         await ctx.send(embed=embed, file=file)
+
+    @commands.command(brief = "KEYGEN",
+        help="Makes a picture, like your avatar, rainbow shifting, just"
+            "like your favorite [Big Shot]!\nAs usual, GIF inputs are not"
+            "supported.\nDefault image is your avatar.",
+        usage = "[@user|url|attachment]",
+        description="Colorshift code by unutbu"
+        )
+    async def keygen(self, ctx, *, msg=""):
+        """Makes it rainbowy! Likely the last command before Asterius 2.0"""
+        with ctx.typing():
+            url_regex = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+            # This could really be good in a seperate function but I may have to
+            # rewrite this in the future anyway :P
+            img_in = io.BytesIO()
+            if len(ctx.message.attachments) > 0:
+                await ctx.message.attachments[0].save(img_in)
+            elif len(ctx.message.mentions) > 0:
+                await ctx.message.mentions[0].avatar_url.save(img_in)
+            elif (match := re.search(url_regex, ctx.message.clean_content)):
+                url = match.group()
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url) as resp:
+                        img_in = io.BytesIO()
+                        img_in.write(await resp.read())
+                        img_in.seek(0)
+            else:
+                await ctx.author.avatar_url.save(img_in)
+
+            try:
+                img = Image.open(img_in)
+            except:
+                await ctx.send("I can't open that file! I need an image.")
+                return
+            # Make it rainbowy!
+            keygenned_image = keygen.keygen(img)
+            keygenned_file = discord.File(keygenned_image, filename="keygen.gif")
+            # and send.
+            await ctx.send("KEYGEN", file=keygenned_file)
+
 
 
 def setup(bot):
